@@ -1,110 +1,241 @@
-import React from 'react';
-import { useForm as useHookForm } from 'react-hook-form';
-
+import React, {useState} from "react";
+import { useForm as useHookForm } from "react-hook-form";
+import { supabase } from '@/lib/supabaseClient';
 const JoinCompany = () => {
-    const { register, handleSubmit, formState: { errors } } = useHookForm();
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+        reset
+	} = useHookForm();
+    const [loading, setLoading] = useState(false);
 
-    const onSubmit = (data) => {
-        console.log(data);
-        alert('Company application submitted successfully!');
-    };
+	const onSubmit = async (data) => {
+		setLoading(true);
 
-    return (
-        <div className="form-container">
-            <div className="form-header">
-                <h2>Company Application</h2>
-                <p>Register your Startup, SME, or Enterprise to connect with top-tier talent.</p>
-            </div>
+		try {
+			// 1. Upload Logo
+			const logoFile = data.logo[0];
+			const logoFileName = `${Date.now()}-${logoFile.name}`;
+			const {error: logoError } = await supabase.storage
+				.from("company-logos")
+				.upload(logoFileName, logoFile);
 
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="form-group">
-                    <label>Company Name *</label>
-                    <input className="form-control" {...register("companyName", { required: "Company Name is required" })} />
-                    {errors.companyName && <span className="error-text">{errors.companyName.message}</span>}
-                </div>
+			if (logoError) throw logoError;
 
-                <div className="form-group">
-                    <label>Website *</label>
-                    <input className="form-control" placeholder="https://" {...register("website", {
-                        required: "Website is required",
-                        pattern: {
-                            value: /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/,
-                            message: "Enter a valid URL"
-                        }
-                    })} />
-                    {errors.website && <span className="error-text">{errors.website.message}</span>}
-                </div>
+			const logo_url = supabase.storage
+				.from("company-logos")
+				.getPublicUrl(logoFileName).data.publicUrl;
 
-                <div className="form-group">
-                    <label>Industry *</label>
-                    <select className="form-control" {...register("industry", { required: "Industry is required" })}>
-                        <option value="">Select Industry...</option>
-                        <option value=" فناوری اطلاعات (IT)">Technology / IT</option>
-                        <option value="Finance">Finance & Banking</option>
-                        <option value="Healthcare">Healthcare</option>
-                        <option value="Retail">Retail & E-commerce</option>
-                        <option value="Manufacturing">Manufacturing</option>
-                        <option value="Other">Other</option>
-                    </select>
-                    {errors.industry && <span className="error-text">{errors.industry.message}</span>}
-                </div>
+			// 2. Upload Certificate
+			const coiFile = data.coi[0];
+			const coiFileName = `${Date.now()}-${coiFile.name}`;
+			const {error: coiError } = await supabase.storage
+				.from("certificates")
+				.upload(coiFileName, coiFile);
 
-                <div style={{ display: 'flex', gap: '20px' }}>
-                    <div className="form-group" style={{ flex: 1 }}>
-                        <label>Organization Size *</label>
-                        <select className="form-control" {...register("orgSize", { required: "Organization Size is required" })}>
-                            <option value="">Select Size...</option>
-                            <option value="1-10">1-10 Employees</option>
-                            <option value="11-50">11-50 Employees</option>
-                            <option value="51-200">51-200 Employees</option>
-                            <option value="201-500">201-500 Employees</option>
-                            <option value="500+">500+ Employees</option>
-                        </select>
-                        {errors.orgSize && <span className="error-text">{errors.orgSize.message}</span>}
-                    </div>
+			if (coiError) throw coiError;
 
-                    <div className="form-group" style={{ flex: 1 }}>
-                        <label>Organization Type *</label>
-                        <select className="form-control" {...register("orgType", { required: "Organization Type is required" })}>
-                            <option value="">Select Type...</option>
-                            <option value="Startup">Startup</option>
-                            <option value="SME">SME</option>
-                            <option value="Enterprise">Enterprise</option>
-                            <option value="NGO">NGO / Non-Profit</option>
-                        </select>
-                        {errors.orgType && <span className="error-text">{errors.orgType.message}</span>}
-                    </div>
-                </div>
+			const coi_url = supabase.storage
+				.from("certificates")
+				.getPublicUrl(coiFileName).data.publicUrl;
 
-                <div className="form-group">
-                    <label>Tagline</label>
-                    <input className="form-control" {...register("tagline")} placeholder="A brief slogan for your company" />
-                </div>
+			// 3. Save to database
+			const { error: dbError } = await supabase
+				.from("company_applications")
+				.insert([
+					{
+						company_name: data.companyName,
+						website: data.website,
+						industry: data.industry,
+						org_size: data.orgSize,
+						org_type: data.orgType,
+						tagline: data.tagline || null,
+						about: data.about,
+						logo_url: logo_url,
+						coi_url: coi_url,
+					},
+				]);
 
-                <div className="form-group">
-                    <label>About Company *</label>
-                    <textarea className="form-control" rows="4" {...register("about", { required: "About section is required" })}></textarea>
-                    {errors.about && <span className="error-text">{errors.about.message}</span>}
-                </div>
+			if (dbError) throw dbError;
 
-                <div className="form-group">
-                    <label>Company Logo *</label>
-                    <input type="file" className="form-control" accept="image/*" {...register("logo", { required: "Logo is required" })} />
-                    {errors.logo && <span className="error-text">{errors.logo.message}</span>}
-                </div>
+			alert("Company application submitted successfully! ✅");
+			reset(); // clear form
+		} catch (error) {
+			console.error(error);
+			alert("Error submitting application: " + error.message);
+		} finally {
+			setLoading(false);
+		}
+	};
 
-                <div className="form-group">
-                    <label>Proof of Ownership / Certificate of Incorporation (CoI) *</label>
-                    <input type="file" className="form-control" accept=".pdf,.png,.jpg,.jpeg" {...register("coi", { required: "Certificate of Incorporation is required" })} />
-                    {errors.coi && <span className="error-text">{errors.coi.message}</span>}
-                </div>
+	return (
+		<div className="form-container">
+			<div className="form-header">
+				<h2>Company Application</h2>
+				<p>
+					Register your Startup, SME, or Enterprise to connect with top-tier
+					talent.
+				</p>
+			</div>
 
-                <div style={{ textAlign: 'center', marginTop: '40px' }}>
-                    <button type="submit" className="btn-primary" style={{ width: '100%' }}>SUBMIT APPLICATION</button>
-                </div>
-            </form>
-        </div>
-    );
+			<form onSubmit={handleSubmit(onSubmit)}>
+				<div className="form-group">
+					<label>Company Name *</label>
+					<input
+						className="form-control"
+						{...register("companyName", {
+							required: "Company Name is required",
+						})}
+					/>
+					{errors.companyName && (
+						<span className="error-text">{errors.companyName.message}</span>
+					)}
+				</div>
+
+				<div className="form-group">
+					<label>Website *</label>
+					<input
+						className="form-control"
+						placeholder="https://"
+						{...register("website", {
+							required: "Website is required",
+							pattern: {
+								value:
+									/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/,
+								message: "Enter a valid URL",
+							},
+						})}
+					/>
+					{errors.website && (
+						<span className="error-text">{errors.website.message}</span>
+					)}
+				</div>
+
+				<div className="form-group">
+					<label>Industry *</label>
+					<select
+						className="form-control"
+						{...register("industry", { required: "Industry is required" })}
+					>
+						<option value="">Select Industry...</option>
+						<option value=" فناوری اطلاعات (IT)">Technology / IT</option>
+						<option value="Finance">Finance & Banking</option>
+						<option value="Healthcare">Healthcare</option>
+						<option value="Retail">Retail & E-commerce</option>
+						<option value="Manufacturing">Manufacturing</option>
+						<option value="Other">Other</option>
+					</select>
+					{errors.industry && (
+						<span className="error-text">{errors.industry.message}</span>
+					)}
+				</div>
+
+				<div style={{ display: "flex", gap: "20px" }}>
+					<div className="form-group" style={{ flex: 1 }}>
+						<label>Organization Size *</label>
+						<select
+							className="form-control"
+							{...register("orgSize", {
+								required: "Organization Size is required",
+							})}
+						>
+							<option value="">Select Size...</option>
+							<option value="1-10">1-10 Employees</option>
+							<option value="11-50">11-50 Employees</option>
+							<option value="51-200">51-200 Employees</option>
+							<option value="201-500">201-500 Employees</option>
+							<option value="500+">500+ Employees</option>
+						</select>
+						{errors.orgSize && (
+							<span className="error-text">{errors.orgSize.message}</span>
+						)}
+					</div>
+
+					<div className="form-group" style={{ flex: 1 }}>
+						<label>Organization Type *</label>
+						<select
+							className="form-control"
+							{...register("orgType", {
+								required: "Organization Type is required",
+							})}
+						>
+							<option value="">Select Type...</option>
+							<option value="Startup">Startup</option>
+							<option value="SME">SME</option>
+							<option value="Enterprise">Enterprise</option>
+							<option value="NGO">NGO / Non-Profit</option>
+						</select>
+						{errors.orgType && (
+							<span className="error-text">{errors.orgType.message}</span>
+						)}
+					</div>
+				</div>
+
+				<div className="form-group">
+					<label>Tagline</label>
+					<input
+						className="form-control"
+						{...register("tagline")}
+						placeholder="A brief slogan for your company"
+					/>
+				</div>
+
+				<div className="form-group">
+					<label>About Company *</label>
+					<textarea
+						className="form-control"
+						rows="4"
+						{...register("about", { required: "About section is required" })}
+					></textarea>
+					{errors.about && (
+						<span className="error-text">{errors.about.message}</span>
+					)}
+				</div>
+
+				<div className="form-group">
+					<label>Company Logo *</label>
+					<input
+						type="file"
+						className="form-control"
+						accept="image/*"
+						{...register("logo", { required: "Logo is required" })}
+					/>
+					{errors.logo && (
+						<span className="error-text">{errors.logo.message}</span>
+					)}
+				</div>
+
+				<div className="form-group">
+					<label>
+						Proof of Ownership / Certificate of Incorporation (CoI) *
+					</label>
+					<input
+						type="file"
+						className="form-control"
+						accept=".pdf,.png,.jpg,.jpeg"
+						{...register("coi", {
+							required: "Certificate of Incorporation is required",
+						})}
+					/>
+					{errors.coi && (
+						<span className="error-text">{errors.coi.message}</span>
+					)}
+				</div>
+
+				<div style={{ textAlign: "center", marginTop: "40px" }}>
+					<button
+						type="submit"
+						className="btn-primary"
+						style={{ width: "100%" }}
+						disabled={loading}
+					>
+						{loading ? "SUBMITTING..." : "SUBMIT APPLICATION"}
+					</button>
+				</div>
+			</form>
+		</div>
+	);
 };
 
 export default JoinCompany;
