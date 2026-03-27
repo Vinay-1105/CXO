@@ -3,20 +3,27 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import JoinCompany from './pages/JoinCompany';
 import JoinExpert from './pages/JoinExpert';
+import SignIn from './pages/SignIn';
+import { AuthModalProvider } from './components/AuthModalContext';
+import AuthModal from './components/AuthModal';
 
 function App() {
     return (
         <Router>
-            <div className="app-container">
-                <Navbar />
-                <main className="main-content">
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/join-company" element={<JoinCompany />} />
-                        <Route path="/join-expert" element={<JoinExpert />} />
-                    </Routes>
-                </main>
-            </div>
+            <AuthModalProvider>
+                <div className="app-container">
+                    <Navbar />
+                    <AuthModal />
+                    <main className="main-content">
+                        <Routes>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/join-company" element={<JoinCompany />} />
+                            <Route path="/join-expert" element={<JoinExpert />} />
+                            <Route path="/signin" element={<SignIn />} />
+                        </Routes>
+                    </main>
+                </div>
+            </AuthModalProvider>
         </Router>
     );
 }

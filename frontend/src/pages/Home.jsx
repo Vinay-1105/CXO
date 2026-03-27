@@ -6,6 +6,7 @@ import corporateHero from '../assets/corporate_hero.png';
 import slideShowImg from '../assets/slide-show.webp';
 import careerMeeting from '../assets/career_meeting.png';
 import careerProfessionals from '../assets/career_professionals.png';
+import { useAuthModal } from '../components/AuthModalContext';
 
 const slides = [
     {
@@ -26,11 +27,27 @@ const slides = [
     }
 ];
 
+// Reusable scroll animation wrapper
+const AnimatedSection = ({ children, className, id, style }) => (
+    <motion.section 
+        className={className} 
+        id={id} 
+        style={style}
+        initial={{ opacity: 0, scale: 0.95, y: 30 }}
+        whileInView={{ opacity: 1, scale: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.15 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+    >
+        {children}
+    </motion.section>
+);
+
 const Home = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [currentSlide, setCurrentSlide] = useState(0);
     const [cardsPerView, setCardsPerView] = useState(3);
+    const { openModal } = useAuthModal();
 
     useEffect(() => {
         const updateCardsPerView = () => {
@@ -71,14 +88,19 @@ const Home = () => {
         <div className="home">
             {/* Hero Section */}
             <section className="hero" style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${corporateHero})` }}>
-                <div className="hero-content">
+                <motion.div 
+                    className="hero-content"
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 1, delay: 0.2 }}
+                >
                     <h1>Experience. Not Headcount.</h1>
                     <p>The premier two-sided marketplace connecting companies with verified senior professionals.</p>
-                </div>
+                </motion.div>
             </section>
 
             {/* About Us Vanguard Style */}
-            <section className="vanguard-about" id="about-us">
+            <AnimatedSection className="vanguard-about" id="about-us">
                 <div className="vanguard-container">
                     <div className="vanguard-left">
                         <h2>About us</h2>
@@ -98,9 +120,9 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
-            </section>
+            </AnimatedSection>
 
-            <section className="jpmorgan-slider">
+            <AnimatedSection className="jpmorgan-slider">
                 <div className="slider-layout">
                     <div className="slider-left-content">
                         <h2 className="slider-title">What problem can we <span>solve together?</span></h2>
@@ -136,10 +158,10 @@ const Home = () => {
                         <img src={slideShowImg} alt="Business Environment" />
                     </div>
                 </div>
-            </section>
+            </AnimatedSection>
 
             {/* Baker Hughes Careers Pop-out Section */}
-            <section className="baker-careers">
+            <AnimatedSection className="baker-careers">
                 <div className="careers-header">
                     <span className="careers-tag">— JOIN US</span>
                     <h2>Be a part of our story</h2>
@@ -148,47 +170,31 @@ const Home = () => {
 
                 <div className="careers-grid">
                     <div className="career-card">
-                        <motion.div
-                            className="career-img-wrapper"
-                            onClick={() => navigate('/join-company')}
-                            style={{ cursor: 'pointer', overflow: 'hidden' }}
-                            initial={{ opacity: 0, y: 40 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, amount: 0.2 }}
-                            transition={{ duration: 0.6, ease: "easeOut" }}
-                        >
-                            <img src={careerMeeting} alt="Companies" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        </motion.div>
+                        <div className="career-img-wrapper" onClick={openModal} style={{ cursor: 'pointer' }}>
+                            <img src={careerMeeting} alt="Companies" className="gateway-image" />
+                        </div>
                         <div className="career-card-content">
                             <h4>Enterprise Gateway</h4>
                             <p>Looking for top-tier fractional executives and advisors for your next strategic milestone.</p>
-                            <a href="#join-company" onClick={(e) => { e.preventDefault(); navigate('/join-company'); }} className="career-link">JOIN / SIGN IN AS COMPANY <span className="arrow">↗</span></a>
+                            <button onClick={openModal} className="career-link" style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left' }}>JOIN / SIGN IN AS COMPANY <span className="arrow">↗</span></button>
                         </div>
                     </div>
 
                     <div className="career-card">
-                        <motion.div
-                            className="career-img-wrapper"
-                            onClick={() => navigate('/join-expert')}
-                            style={{ cursor: 'pointer', overflow: 'hidden' }}
-                            initial={{ opacity: 0, y: 40 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, amount: 0.2 }}
-                            transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
-                        >
-                            <img src={careerProfessionals} alt="Experts" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        </motion.div>
+                        <div className="career-img-wrapper" onClick={openModal} style={{ cursor: 'pointer' }}>
+                            <img src={careerProfessionals} alt="Experts" className="gateway-image" />
+                        </div>
                         <div className="career-card-content">
                             <h4>Expert Gateway</h4>
                             <p>Are you a verified senior professional looking for flexible, high-impact engagements.</p>
-                            <a href="#join-expert" onClick={(e) => { e.preventDefault(); navigate('/join-expert'); }} className="career-link">JOIN / SIGN IN AS EXPERT <span className="arrow">↗</span></a>
+                            <button onClick={openModal} className="career-link" style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left' }}>JOIN / SIGN IN AS EXPERT <span className="arrow">↗</span></button>
                         </div>
                     </div>
                 </div>
-            </section>
+            </AnimatedSection>
 
             {/* Membership Section */}
-            <section className="membership-section" id="membership">
+            <AnimatedSection className="membership-section" id="membership">
                 <div className="membership-container">
                     <div className="membership-header">
                         <h2>Membership Plans</h2>
@@ -203,7 +209,7 @@ const Home = () => {
                                 <li><Briefcase size={20} /> Access to fractional role applications</li>
                                 <li><Briefcase size={20} /> Community forums and networking</li>
                             </ul>
-                            <a href="/join-expert" className="membership-btn">Join as Expert</a>
+                            <button onClick={openModal} className="membership-btn" style={{ background: 'transparent', border: '1px solid var(--primary-accent)', color: 'var(--primary-accent)', cursor: 'pointer', fontFamily: 'inherit' }}>Join as Expert</button>
                         </div>
                         <div className="membership-card" style={{ borderTop: '4px solid var(--primary-accent)' }}>
                             <h3>Enterprise</h3>
@@ -213,14 +219,14 @@ const Home = () => {
                                 <li><Briefcase size={20} /> Managed delivery & project oversight</li>
                                 <li><Briefcase size={20} /> Escrow payment & governance</li>
                             </ul>
-                            <a href="/join-company" className="membership-btn" style={{ background: 'var(--primary-accent)', color: '#fff' }}>Join as Company</a>
+                            <button onClick={openModal} className="membership-btn" style={{ background: 'var(--primary-accent)', color: '#fff', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>Join as Company</button>
                         </div>
                     </div>
                 </div>
-            </section>
+            </AnimatedSection>
 
             {/* Contact Us Section */}
-            <section className="contact-section" id="contact-us">
+            <AnimatedSection className="contact-section" id="contact-us">
                 <h2>CONTACT US</h2>
                 <div className="contact-details">
                     ADDRESS: Pune, Maharashtra, India<br />
@@ -234,7 +240,7 @@ const Home = () => {
                         <button type="submit" className="subscribe-btn">Get Updates</button>
                     </form>
                 </div>
-            </section>
+            </AnimatedSection>
 
             {/* Enhanced Footer */}
             <footer className="site-footer">
@@ -246,8 +252,7 @@ const Home = () => {
                     <div className="footer-links">
                         <h4>Explore</h4>
                         <a href="#about-us" onClick={(e) => { e.preventDefault(); document.getElementById('about-us')?.scrollIntoView({ behavior: 'smooth' }); }}>About Us</a>
-                        <a href="/join-company">Join as Company</a>
-                        <a href="/join-expert">Join as Expert</a>
+                        <button onClick={openModal} style={{ background: 'none', border: 'none', padding: 0, color: '#aaa', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit', fontSize: '0.9rem', marginBottom: '12px' }}>Join as Company / Expert</button>
                     </div>
                     <div className="footer-legal">
                         <h4>Legal</h4>
