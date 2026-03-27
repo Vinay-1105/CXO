@@ -901,3 +901,235 @@ h6 {
   background: var(--primary-accent);
   color: #fff;
 }
+
+/* Modal Background and Content */
+.auth-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.auth-modal-content {
+    background: #fff;
+    width: 90%;
+    max-width: 800px;
+    border-radius: 12px;
+    position: relative;
+    padding: 40px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.auth-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.3s, transform 0.3s;
+}
+
+.auth-modal-close:hover {
+    color: var(--primary-accent);
+    transform: rotate(90deg);
+}
+
+.auth-modal-grid {
+    display: flex;
+    gap: 40px;
+    align-items: stretch;
+}
+
+.auth-modal-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.auth-modal-divider {
+    width: 1px;
+    background: #eaeaea;
+}
+
+.auth-modal-col h3 {
+    font-size: 1.6rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.auth-modal-col p {
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 0.95rem;
+}
+
+.modal-btn {
+    padding: 14px 24px;
+    border-radius: 6px;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+    border: 2px solid var(--primary-accent);
+}
+
+.new-btn {
+    background-color: var(--primary-accent);
+    color: #fff;
+}
+
+.new-btn:hover {
+    background-color: #32a898;
+    border-color: #32a898;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 197, 179, 0.3);
+}
+
+.login-btn {
+    background-color: transparent;
+    color: var(--primary-accent);
+}
+
+.login-btn:hover {
+    background-color: rgba(59, 197, 179, 0.1);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .auth-modal-grid {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .auth-modal-divider {
+        width: 100%;
+        height: 1px;
+        margin: 10px 0;
+    }
+}
+
+/* Navbar Join/SignIn Button */
+.nav-join-btn {
+    background: var(--primary-accent);
+    color: #1C1C1C;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nav-join-btn:hover {
+    background: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+}
+
+/* Innovative Navbar Hover Effects */
+.hover-effect {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 2px;
+}
+
+.hover-effect::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    background-color: var(--primary-accent);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.nav-link:hover .hover-effect::after,
+.nav-link.active .hover-effect::after {
+    width: 100%;
+}
+
+/* Gateway Image Hover Effect */
+.gateway-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.career-img-wrapper:hover .gateway-image {
+    transform: scale(1.08);
+}
+
+/* Captcha Styles */
+.captcha-group {
+    margin-bottom: 25px;
+}
+
+.captcha-display-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.captcha-display {
+    background: #f0f4f8;
+    border: 1px dashed #cbd5e1;
+    padding: 10px 20px;
+    font-family: monospace;
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: 5px;
+    color: #334155;
+    border-radius: 4px;
+    user-select: none;
+}
+
+.captcha-refresh {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #64748b;
+    cursor: pointer;
+    transition: color 0.3s, transform 0.3s;
+}
+
+.captcha-refresh:hover {
+    color: var(--primary-accent);
+    transform: rotate(180deg);
+}
+
+/* Form Specific */
+.signin-container {
+    max-width: 500px;
+}
