@@ -8,11 +8,12 @@ const smoothScrollTo = (targetPosition, duration) => {
     const distance = targetPosition - startPosition;
     let startTime = null;
 
+    // easeInOutQuad
     const ease = (t, b, c, d) => {
         t /= d / 2;
-        if (t < 1) return c / 2 * t * t * t + b;
-        t -= 2;
-        return c / 2 * (t * t * t + 2) + b;
+        if (t < 1) return c / 2 * t * t + b;
+        t--;
+        return -c / 2 * (t * (t - 2) - 1) + b;
     };
 
     const animation = (currentTime) => {
@@ -20,7 +21,12 @@ const smoothScrollTo = (targetPosition, duration) => {
         const timeElapsed = currentTime - startTime;
         const run = ease(timeElapsed, startPosition, distance, duration);
         window.scrollTo(0, run);
-        if (timeElapsed < duration) requestAnimationFrame(animation);
+        
+        if (timeElapsed < duration) {
+            requestAnimationFrame(animation);
+        } else {
+            window.scrollTo(0, targetPosition);
+        }
     };
 
     requestAnimationFrame(animation);
