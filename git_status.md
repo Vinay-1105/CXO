@@ -1,0 +1,11 @@
+M  frontend/src/App.jsx
+UA frontend/src/components/AuthModal.jsx
+UA frontend/src/components/AuthModalContext.jsx
+M  frontend/src/components/Navbar.jsx
+M  frontend/src/index.css
+M  frontend/src/pages/Home.jsx
+UA frontend/src/pages/SignIn.jsx
+?? dist/
+?? git_status.md
+?? git_status.txt
+?? node_modules/
