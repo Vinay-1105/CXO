@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/lib/supabaseClient";
+import OTPBox from "../components/OTPBox";
 import {
 	CheckCircle2,
 	ChevronRight,
@@ -24,6 +25,7 @@ const JoinCompany = () => {
 	const [logoPreview, setLogoPreview] = useState(null);
 	const [otpVerified, setOtpVerified] = useState(false);
 	const [showErrorBanner, setShowErrorBanner] = useState(false);
+	const [showOtp, setShowOtp] = useState(false);
 	const [passwordStrength, setPasswordStrength] = useState({
 		score: 0,
 		text: "",
@@ -131,16 +133,22 @@ const JoinCompany = () => {
 		window.scrollTo({ top: 0, behavior: "smooth" });
 	};
 
-	const handleSendOTP = () => {
-		if (!errors.email && watch("email")) {
-			alert("OTP sent to your email!");
-			// Mocking quick verification
-			setTimeout(() => {
-				setOtpVerified(true);
-				alert("Email verified successfully!");
-			}, 1500);
+	const handleSendOTP = async () => {
+		const email = watch("email");
+		const res = await fetch("http://localhost:5000/api/auth/send-otp", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ email }),
+		});
+
+		if (res.ok) {
+			alert("OTP sent");
+			setShowOtp(true);
 		} else {
-			trigger("email");
+			const data = await res.json();
+			alert(data.error);
 		}
 	};
 
@@ -856,6 +864,15 @@ const JoinCompany = () => {
 					</div>
 				</form>
 			</div>
+			{showOtp && (
+				<OTPBox
+					email={watch("email")}
+					role="company"
+					onSuccess={() => {
+						alert("Verified ✅");
+					}}
+				/>
+			)}
 		</div>
 	);
 };

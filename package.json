@@ -1,0 +1,31 @@
+{
+  "name": "cxo",
+  "version": "1.0.0",
+  "description": "Experience the future of Executive Networking with CXOConnect. This landing page is built with React, Vite, Framer Motion, and Tailwind CSS.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vinay-1105/CXO.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Vinay-1105/CXO/issues"
+  },
+  "homepage": "https://github.com/Vinay-1105/CXO#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.101.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "ioredis": "^5.10.1",
+    "jsonwebtoken": "^9.0.3",
+    "nodemailer": "^8.0.4",
+    "resend": "^6.10.0"
+  }
+}

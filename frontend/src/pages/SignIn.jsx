@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabaseClient";
+import OTPBox from "../components/OTPBox";
 
 const SignIn = () => {
 	const navigate = useNavigate();
@@ -13,17 +14,30 @@ const SignIn = () => {
 	const [loading, setLoading] = useState(false);
 	const [message, setMessage] = useState("");
 	const [error, setError] = useState("");
-	const verifyOtp = async (email, token) => {
-		const { data, error } = await supabase.auth.verifyOtp({
-			email,
-			token,
-			type: "email",
+	const [otp, setOtp] = useState("");
+	const [showOtp, setShowOtp] = useState(false);
+	const [resolvedEmail, setResolvedEmail] = useState("");
+
+	const verifyOtp = async (otp) => {
+		const res = await fetch("http://localhost:5000/api/auth/verify-otp", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				email: resolvedEmail,
+				otp,
+				role,
+			}),
 		});
 
-		if (error) {
-			alert("Invalid OTP");
+		const data = await res.json();
+
+		if (res.ok) {
+			localStorage.setItem("token", data.token);
+			navigate("/dashboard");
 		} else {
-			alert("Login successful");
+			setError(data.error);
 		}
 	};
 
@@ -38,55 +52,69 @@ const SignIn = () => {
 				const searchValue = identifier.trim();
 				console.log("🔍 Searching for:", `"${searchValue}"`);
 
-				// 1. Get ALL rows to see if we can read the table at all
-				const { data: allRows, error: allError } = await supabase
-					.from("company_applications")
-					.select("*");
-
-				console.log("All rows in table:", allRows);
-				console.log("Error fetching all rows:", allError);
-
 				// 2. Try exact match on company_handle
-				const { data, error } = await supabase
-					.from("company_applications")
-					.select("company_name, company_handle, gstin, admin_email")
-					.eq("company_handle", searchValue)
-					.maybeSingle();
+				let query = supabase.from("company_applications").select("admin_email");
+
+				if (searchValue.startsWith("@")) {
+					query = query.eq("company_handle", searchValue);
+				} else {
+					query = query.eq("gstin", searchValue);
+				}
+
+				const { data, error } = await query.maybeSingle();
 
 				console.log("Exact match result:", data);
 				console.log("Exact match error:", error);
 
-				if (allError) throw allError;
-				if (error) throw error;
-
-				if (!data) {
-					throw new Error(
-						`No match found for "${searchValue}". Check console for all rows.`,
-					);
-				}
+				if (error || !data) {
+  throw new Error("Company not found");
+}
 
 				const targetEmail = data.admin_email;
-				if (!targetEmail) throw new Error("No admin email found.");
+setResolvedEmail(targetEmail);
 
-				const { error: otpError } = await supabase.auth.signInWithOtp({
-					email: targetEmail
-				});
+				const res = await fetch("http://localhost:5000/api/auth/send-otp", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ email: targetEmail }),
+});
 
-				if (otpError) throw otpError;
+const dataRes = await res.json();
+
+if (!res.ok) throw new Error(dataRes.error);
 
 				setMessage(`✅ OTP sent to ${targetEmail}`);
+				setShowOtp(true);
 			} else {
 				// Expert part remains same
-				const { error: authError } = await supabase.auth.signInWithOtp({
-					email: identifier,
-					options: {
-						emailRedirectTo: `${window.location.origin}/`,
-						shouldCreateUser: false,
-					},
-				});
+				// 👨‍💼 EXPERT LOGIN
+				if (loginMethod === "otp") {
+					// ✅ Use YOUR backend OTP
+					const res = await fetch("http://localhost:5000/api/auth/send-otp", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({ email: identifier }),
+					});
 
-				if (authError) throw authError;
-				setMessage(`✅ Sent to ${identifier}`);
+					const data = await res.json();
+
+					if (!res.ok) throw new Error(data.error);
+
+					setMessage(`✅ OTP sent to ${identifier}`);
+					  setShowOtp(true);
+				} else {
+					// ✅ Use Supabase for magic link
+					const { error } = await supabase.auth.signInWithOtp({
+						email: identifier,
+						options: {
+							emailRedirectTo: window.location.origin,
+						},
+					});
+				}
+				  if (error) throw error;
+				setMessage(`✅ Magic link sent to ${identifier}`);
 			}
 		} catch (err) {
 			console.error("SignIn Error:", err);
@@ -123,7 +151,7 @@ const SignIn = () => {
 								: "you@example.com"
 						}
 						value={identifier}
-						onChange={(e) => setIdentifier(e.target.value.trim())}
+						onChange={(e) => setIdentifier(e.target.value)}
 						required
 					/>
 				</div>
@@ -190,7 +218,15 @@ const SignIn = () => {
 					Join as {role === "company" ? "Company" : "Expert"}
 				</a>
 			</p>
+			{showOtp && (
+  <OTPBox
+  email={role === "company" ? resolvedEmail : identifier}
+    role={role}
+    onSuccess={() => navigate("/dashboard")}
+  />
+)}
 		</div>
+		
 	);
 };
 
