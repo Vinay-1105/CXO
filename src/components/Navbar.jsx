@@ -38,6 +38,10 @@ const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const { openModal } = useAuthModal();
 
+    if (location.pathname === '/company-dashboard') {
+        return null;
+    }
+
     const handleScrollTarget = (e, targetId) => {
         e.preventDefault();
         setIsOpen(false);

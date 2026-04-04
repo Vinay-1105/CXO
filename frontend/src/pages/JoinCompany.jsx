@@ -4,6 +4,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { CheckCircle2, ChevronRight, ChevronLeft, AlertCircle } from "lucide-react";
 import "./JoinCompany.css";
 import { useNavigate } from "react-router-dom";
+import OTPModal from "../components/OTPModal";
 
 const JOIN_STEPS = ["Basic Details", "Company Info", "Online Presence", "Account Setup"];
 
@@ -13,8 +14,8 @@ const JoinCompany = () => {
 	const [loading, setLoading] = useState(false);
 	const [logoPreview, setLogoPreview] = useState(null);
 	const [otpVerified, setOtpVerified] = useState(false);
+	const [showOtpModal, setShowOtpModal] = useState(false);
 	const [showErrorBanner, setShowErrorBanner] = useState(false);
-	const [passwordStrength, setPasswordStrength] = useState({ score: 0, text: "", colorClass: "" });
 
 	const {
 		register,
@@ -28,7 +29,6 @@ const JoinCompany = () => {
 	});
 
 	const watchLogo = watch("logo");
-	const watchPassword = watch("password");
 
 	useEffect(() => {
 		if (watchLogo && watchLogo.length > 0) {
@@ -44,27 +44,6 @@ const JoinCompany = () => {
 			setLogoPreview(null);
 		}
 	}, [watchLogo]);
-
-	useEffect(() => {
-		if (watchPassword) {
-			calculatePasswordStrength(watchPassword);
-		} else {
-			setPasswordStrength({ score: 0, text: "", colorClass: "" });
-		}
-	}, [watchPassword]);
-
-	const calculatePasswordStrength = (pwd) => {
-		let score = 0;
-		if (pwd.length >= 8) score += 1;
-		if (/[A-Z]/.test(pwd)) score += 1;
-		if (/[0-9]/.test(pwd)) score += 1;
-		if (/[^A-Za-z0-9]/.test(pwd)) score += 1;
-
-		if (score === 0 || score === 1) setPasswordStrength({ score, text: "Weak", colorClass: "weak" });
-		else if (score === 2) setPasswordStrength({ score, text: "Fair", colorClass: "fair" });
-		else if (score === 3) setPasswordStrength({ score, text: "Good", colorClass: "good" });
-		else if (score === 4) setPasswordStrength({ score, text: "Strong", colorClass: "strong" });
-	};
 
 	const checkUniqueField = async (field, value) => {
 		// Mock unique check - assume valid unless "taken"
@@ -107,20 +86,24 @@ const JoinCompany = () => {
 
 	const handleSendOTP = () => {
 		if (!errors.email && watch("email")) {
-			alert("OTP sent to your email!");
-			// Mocking quick verification
-			setTimeout(() => {
-				setOtpVerified(true);
-				alert("Email verified successfully!");
-			}, 1500);
+            setShowOtpModal(true);
 		} else {
 			trigger("email");
 		}
 	};
 
+	const handleVerifyOTP = (otp) => {
+        // Mock verification
+        setTimeout(() => {
+            setOtpVerified(true);
+            setShowOtpModal(false);
+            alert("Email verified successfully!");
+        }, 500);
+    };
+
 	const onSubmit = async (data) => {
 		// Final step validation
-		const isFinalValid = await trigger(["adminName", "adminEmail", "password", "confirmPassword", "companyHandle", "gstin", "terms"]);
+		const isFinalValid = await trigger(["adminName", "adminEmail", "companyHandle", "gstin", "terms"]);
 		if (!isFinalValid) {
 			setShowErrorBanner(true);
 			return;
@@ -497,47 +480,6 @@ const JoinCompany = () => {
 								{errors.adminEmail && <span className="error-text">{errors.adminEmail.message}</span>}
 							</div>
 
-							<div style={{ display: "flex", gap: "20px" }}>
-								<div className="form-group" style={{ flex: 1 }}>
-									<label>Create Password *</label>
-									<input
-										type="password"
-										className="form-control"
-										placeholder="••••••••"
-										{...register("password", {
-											required: "Password is required",
-											pattern: {
-												value: /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/,
-												message: "Must include min 8 chars, 1 uppercase, 1 number, 1 special char"
-											}
-										})}
-									/>
-									{watchPassword && (
-										<div className="password-strength-container">
-											{[1, 2, 3, 4].map((level) => (
-												<div key={level} className={`strength-bar ${passwordStrength.score >= level ? passwordStrength.colorClass : ""}`}></div>
-											))}
-										</div>
-									)}
-									{watchPassword && <span className="password-strength-text" style={{ color: `var(--${passwordStrength.colorClass})` }}>Strength: {passwordStrength.text}</span>}
-									{errors.password && <span className="error-text">{errors.password.message}</span>}
-								</div>
-
-								<div className="form-group" style={{ flex: 1 }}>
-									<label>Confirm Password *</label>
-									<input
-										type="password"
-										className="form-control"
-										placeholder="••••••••"
-										{...register("confirmPassword", {
-											required: "Please confirm password",
-											validate: (val) => val === watchPassword || "Passwords do not match"
-										})}
-									/>
-									{errors.confirmPassword && <span className="error-text">{errors.confirmPassword.message}</span>}
-								</div>
-							</div>
-
 							<div className="form-group">
 								<label>Unique Company Handle *</label>
 								<input
@@ -618,6 +560,11 @@ const JoinCompany = () => {
 					</div>
 				</form>
 			</div>
+            <OTPModal 
+                isOpen={showOtpModal} 
+                onClose={() => setShowOtpModal(false)}
+                onVerify={handleVerifyOTP}
+            />
 		</div>
 	);
 };
