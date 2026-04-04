@@ -186,13 +186,53 @@ continuous refinement of the product.
 
 <h2>9. Technology Stack</h2>
 
+<p>
+The CXOConnect platform is built using modern web technologies that support
+scalability, security and efficient real-time communication.
+</p>
+
+<h3>Frontend</h3>
+
 <ul>
-<li><b>Frontend:</b> React.js for web applications and React Native / Flutter for mobile applications.</li>
-<li><b>Backend:</b> Node.js and Express.js for handling server-side logic.</li>
-<li><b>Database:</b> PostgreSQL for structured data storage and Redis for caching.</li>
-<li><b>Search Engine:</b> Elasticsearch for advanced expert discovery and matching.</li>
-<li><b>Payments:</b> Razorpay and Stripe for escrow-based payment systems.</li>
-<li><b>Infrastructure:</b> AWS cloud services with Docker containerization.</li>
+<li>React.js for building the interactive web interface.</li>
+<li>HTML5 and CSS3 for layout and styling.</li>
+<li>JavaScript for application logic and UI interactions.</li>
+</ul>
+
+<h3>Backend</h3>
+
+<ul>
+<li>Supabase – an open-source Backend-as-a-Service platform.</li>
+<li>Supabase provides authentication, database management, APIs and real-time functionality.</li>
+</ul>
+
+<h3>Database</h3>
+
+<ul>
+<li>PostgreSQL database managed through Supabase.</li>
+<li>Secure data storage for users, requirements, engagements and transactions.</li>
+</ul>
+
+<h3>Authentication</h3>
+
+<ul>
+<li>Supabase Authentication for user login and account management.</li>
+<li>Supports email-based authentication and secure session handling.</li>
+</ul>
+
+<h3>Hosting and Deployment</h3>
+
+<ul>
+<li>Frontend deployment using modern web hosting platforms.</li>
+<li>Backend services managed through Supabase cloud infrastructure.</li>
+</ul>
+
+<h3>Development Tools</h3>
+
+<ul>
+<li>Git and GitHub for version control.</li>
+<li>Figma for UI/UX design and wireframing.</li>
+<li>VS Code as the primary development environment.</li>
 </ul>
 
 <hr>
