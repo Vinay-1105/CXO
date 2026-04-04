@@ -194,7 +194,9 @@ scalability, security, and efficient real-time communication.
 <h3>Frontend</h3>
 
 <ul>
-<p>React.js for building the interactive web interface, HTML5 and CSS3 for layout and styling, JavaScript for application logic and UI interactions.</p>
+<li>React.js for building the interactive web interface.</li>
+<li>HTML5 and CSS3 for layout and styling.</li>
+<li>JavaScript for application logic and UI interactions.</li>
 </ul>
 
 <h3>Backend</h3>
