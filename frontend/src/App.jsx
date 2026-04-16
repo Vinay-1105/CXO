@@ -1,3 +1,8 @@
+// Tailwind test block (uncomment to test, comment out the rest of the file)
+// export default function App() {
+//   return <div className="bg-blue-500 text-white p-10 text-3xl">Tailwind is working!</div>;
+// }
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';

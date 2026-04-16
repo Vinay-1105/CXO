@@ -87,35 +87,37 @@ const Home = () => {
     return (
         <div className="home">
             {/* Hero Section */}
-            <section className="hero" style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${corporateHero})` }}>
+            <section className="relative h-[80vh] bg-cover bg-center flex items-center justify-center text-center text-white" style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${corporateHero})` }}>
                 <motion.div 
                     className="hero-content"
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1, delay: 0.2 }}
                 >
-                    <h1>Experience. Not Headcount.</h1>
-                    <p>The premier two-sided marketplace connecting companies with verified senior professionals.</p>
+                    <h1 className="text-5xl md:text-7xl font-extrabold uppercase max-w-3xl leading-tight mb-5">Experience. Not Headcount.</h1>
+                    <p className="text-lg md:text-2xl font-light tracking-wider mb-10">The premier two-sided marketplace connecting companies with verified senior professionals.</p>
                 </motion.div>
             </section>
 
             {/* About Us Vanguard Style */}
-            <AnimatedSection className="vanguard-about" id="about-us">
-                <div className="vanguard-container">
-                    <div className="vanguard-left">
-                        <h2>About us</h2>
+            <AnimatedSection className="bg-gray-900 text-white py-24 w-full" id="about-us">
+                <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-12 px-4">
+                    <div className="flex-1">
+                        <h2 className="text-3xl font-bold mb-4">About us</h2>
                         <p>
-                            CXOConnect matches companies with senior professionals for fractional leadership, interim roles, advisory, and transformation projects giving startups, SMEs, and enterprises access to vetted CXOs, Directors, and PMOs without full-time hires.                        </p>
-                        <p style={{ marginTop: '20px' }}>
-                            We solve the expertise gap for companies needing proven leaders for scaling, fundraising, or short-term projects. Professionals gain trusted access to meaningful gigs through AI matching, verified profiles, and PMO governance ensuring smooth delivery                        </p>
+                            CXOConnect matches companies with senior professionals for fractional leadership, interim roles, advisory, and transformation projects giving startups, SMEs, and enterprises access to vetted CXOs, Directors, and PMOs without full-time hires.
+                        </p>
+                        <p className="mt-5">
+                            We solve the expertise gap for companies needing proven leaders for scaling, fundraising, or short-term projects. Professionals gain trusted access to meaningful gigs through AI matching, verified profiles, and PMO governance ensuring smooth delivery.
+                        </p>
                     </div>
-                    <div className="vanguard-right">
-                        <div className="vanguard-stat-card">
-                            <h3 className="vanguard-stat">Vetted Trust</h3>
+                    <div className="flex-1 flex flex-col gap-6">
+                        <div className="bg-gray-800 rounded-xl p-6 shadow">
+                            <h3 className="text-xl font-semibold mb-2">Vetted Trust</h3>
                             <p>100% verified profiles and CXOConnect delivers vetted senior talent on-demand.</p>
                         </div>
-                        <div className="vanguard-stat-card">
-                            <h3 className="vanguard-stat">Trust Governance</h3>
+                        <div className="bg-gray-800 rounded-xl p-6 shadow">
+                            <h3 className="text-xl font-semibold mb-2">Trust Governance</h3>
                             <p>Fractional leadership for scalable business transformation.</p>
                         </div>
                     </div>

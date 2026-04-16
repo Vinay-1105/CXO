@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/lib/supabaseClient";
 import { CheckCircle2, ChevronRight, ChevronLeft, AlertCircle } from "lucide-react";
-import "./JoinCompany.css";
 import { useNavigate } from "react-router-dom";
 import OTPModal from "../components/OTPModal";
 
@@ -173,31 +172,25 @@ const JoinCompany = () => {
 		}
 	};
 
-	return (
-		<div className="wizard-page-wrapper">
-			<div className="wizard-container">
-				<div className="form-header">
-					<h2>Company Onboarding</h2>
-					<p>Register your organization to access our exclusive network of premium talent.</p>
-				</div>
-
-				<div className="wizard-progress">
-					{JOIN_STEPS.map((step, index) => (
-						<div key={index} style={{ textAlign: "center", flex: 1, position: "relative" }}>
-							<div
-								className={`progress-step ${currentStep === index ? "active" : ""} ${currentStep > index ? "completed" : ""}`}
-								style={{ margin: "0 auto" }}
-							>
-								{currentStep > index ? <CheckCircle2 size={20} /> : index + 1}
-							</div>
-							<span style={{ fontSize: "0.85rem", marginTop: "8px", display: "block", color: currentStep >= index ? "var(--primary-accent)" : "#94a3b8", fontWeight: currentStep >= index ? "600" : "400" }}>
-								{step}
-							</span>
-						</div>
-					))}
-				</div>
-
-				{showErrorBanner && (
+	 return (
+		 <div className="relative min-h-screen py-20 px-5 bg-gray-50 flex justify-center items-start overflow-hidden z-10">
+			 <div className="absolute inset-0 z-0 pointer-events-none">
+				 <div className="w-full h-full bg-gradient-radial from-teal-400/10 to-white/0"></div>
+			 </div>
+			 <div className="relative max-w-3xl w-full mx-auto bg-white/90 backdrop-blur-lg rounded-2xl shadow-xl p-10">
+				 <div className="mb-8">
+					 <h2 className="text-2xl font-bold mb-2">Company Onboarding</h2>
+					 <p className="text-gray-600">Join our network and unlock opportunities for your organization.</p>
+				 </div>
+				 <div className="flex justify-between items-center mb-10 relative">
+					 {JOIN_STEPS.map((step, index) => (
+						 <div key={index} className="flex-1 text-center relative">
+							 <div className={`mx-auto w-8 h-8 flex items-center justify-center rounded-full border-2 ${currentStep === index ? 'border-teal-500 bg-teal-50 text-teal-600 font-bold' : currentStep > index ? 'border-teal-400 bg-teal-400 text-white' : 'border-gray-300 bg-white text-gray-400'}`}>{currentStep > index ? <CheckCircle2 size={20} /> : index + 1}</div>
+							 <span className={`block mt-2 text-xs ${currentStep >= index ? 'text-teal-500 font-semibold' : 'text-gray-400 font-normal'}`}>{step}</span>
+						 </div>
+					 ))}
+				 </div>
+				 {showErrorBanner && (
 					<div className="error-banner">
 						<AlertCircle size={20} />
 						Please fill all required details correctly to proceed.

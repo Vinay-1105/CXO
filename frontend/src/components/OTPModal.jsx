@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import "./OTPModal.css";
+
 
 const OTPModal = ({ isOpen, onClose, onVerify }) => {
   const [otp, setOtp] = useState(["", "", "", ""]);
@@ -49,19 +49,19 @@ const OTPModal = ({ isOpen, onClose, onVerify }) => {
   };
 
   return (
-    <div className="otp-modal-overlay">
-      <form className="otp-Form" onSubmit={handleSubmit}>
-        <span className="mainHeading">Enter OTP</span>
-        <p className="otpSubheading">We have sent a verification code to your email</p>
+    <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50">
+      <form className="w-64 bg-white flex flex-col items-center justify-center p-8 gap-5 rounded-xl shadow-lg relative animate-scale-up" onSubmit={handleSubmit}>
+        <span className="text-xl font-bold mb-2">Enter OTP</span>
+        <p className="text-gray-600 text-sm mb-2 text-center">We have sent a verification code to your email</p>
 
-        <div className="inputContainer">
+        <div className="flex gap-2 mb-2">
           {[0, 1, 2, 3].map((index) => (
             <input
               key={index}
               required
               maxLength="1"
               type="text"
-              className="otp-input"
+              className="w-10 h-12 text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500 text-lg font-semibold"
               value={otp[index]}
               onChange={(e) => handleChange(e, index)}
               onKeyDown={(e) => handleKeyDown(e, index)}
@@ -70,16 +70,15 @@ const OTPModal = ({ isOpen, onClose, onVerify }) => {
           ))}
         </div>
 
-        <button className="verifyButton" type="submit">
+        <button className="w-full bg-teal-500 hover:bg-teal-600 text-white font-medium py-2 px-4 rounded transition" type="submit">
           Verify
         </button>
-        <button className="exitBtn" type="button" onClick={onClose}>
+        <button className="absolute top-2 right-3 text-2xl text-gray-400 hover:text-gray-700" type="button" onClick={onClose}>
           ×
         </button>
 
-        <p className="resendNote">
-          Didn't receive the code?
-          <button className="resendBtn" type="button" onClick={() => alert("Code resent!")}>
+        <p className="text-xs text-gray-500 mt-2">Didn't receive the code?
+          <button className="ml-1 text-teal-600 hover:underline" type="button" onClick={() => alert("Code resent!")}>
             Resend Code
           </button>
         </p>

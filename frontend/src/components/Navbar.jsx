@@ -58,36 +58,21 @@ const Navbar = () => {
     };
 
     return (
-        <nav className={`navbar ${isOpen ? 'menu-open' : ''}`}>
-            <div className="nav-header">
-                <Link to="/" className="nav-brand" onClick={() => setIsOpen(false)}>
-                    CXO<span>.</span>
+        <nav className={`bg-gray-900 bg-opacity-75 backdrop-blur-md text-white flex justify-between items-center px-16 sticky top-0 z-50 h-20 w-full max-w-full overflow-hidden border-b border-white/10 transition-all duration-300 ${isOpen ? 'h-[380px] flex-col items-start' : ''}`}> 
+            <div className="flex justify-between items-center w-auto h-20">
+                <Link to="/" className="font-serif text-3xl italic font-bold cursor-pointer text-white no-underline" onClick={() => setIsOpen(false)}>
+                    CXO<span className="text-teal-400">.</span>
                 </Link>
-                <button className="mobile-toggle" onClick={() => setIsOpen(!isOpen)}>
+                <button className="block md:hidden bg-transparent border-none text-white cursor-pointer ml-4" onClick={() => setIsOpen(!isOpen)}>
                     {isOpen ? <X size={28} /> : <Menu size={28} />}
                 </button>
             </div>
-
-            <div className={`nav-links ${isOpen ? 'active' : ''}`}>
-                <Link to="/" onClick={() => setIsOpen(false)} className={location.pathname === '/' ? 'nav-link active' : 'nav-link'}>
-                    <span className="hover-effect">Home</span>
-                </Link>
-                
-                <a href="#membership" onClick={(e) => handleScrollTarget(e, 'membership')} className="nav-link">
-                    <span className="hover-effect">Membership</span>
-                </a>
-                
-                <a href="#about-us" onClick={(e) => handleScrollTarget(e, 'about-us')} className="nav-link">
-                    <span className="hover-effect">About Us</span>
-                </a>
-                
-                <a href="#contact-us" onClick={(e) => handleScrollTarget(e, 'contact-us')} className="nav-link">
-                    <span className="hover-effect">Contact</span>
-                </a>
-
-                <button className="nav-join-btn" onClick={() => { setIsOpen(false); openModal(); }}>
-                    Join / Sign In
-                </button>
+            <div className={`hidden md:flex gap-10 items-center ${isOpen ? 'flex flex-col items-start w-full gap-6 mt-4 pb-8' : ''}`}> 
+                <Link to="/" onClick={() => setIsOpen(false)} className={`text-gray-200 no-underline text-base font-normal tracking-wide transition-colors duration-300 relative cursor-pointer ${location.pathname === '/' ? 'text-teal-400' : ''}`}>Home</Link>
+                <a href="#membership" onClick={(e) => handleScrollTarget(e, 'membership')} className="text-gray-200 no-underline text-base font-normal tracking-wide transition-colors duration-300 relative cursor-pointer">Membership</a>
+                <a href="#about-us" onClick={(e) => handleScrollTarget(e, 'about-us')} className="text-gray-200 no-underline text-base font-normal tracking-wide transition-colors duration-300 relative cursor-pointer">About Us</a>
+                <a href="#contact-us" onClick={(e) => handleScrollTarget(e, 'contact-us')} className="text-gray-200 no-underline text-base font-normal tracking-wide transition-colors duration-300 relative cursor-pointer">Contact</a>
+                <button className="ml-4 px-6 py-2 rounded-lg bg-teal-500 hover:bg-teal-600 text-white font-semibold transition-colors duration-300" onClick={() => { setIsOpen(false); openModal(); }}>Join / Sign In</button>
             </div>
         </nav>
     );
