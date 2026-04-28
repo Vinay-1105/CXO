@@ -79,10 +79,11 @@ const JoinExpert = () => {
 	};
 
 	const handleSendOTP = async () => {
-		if (!errors.email && watch("email")) {
+		const emailValue = watch("email")?.trim();
+		if (!errors.email && emailValue) {
 			try {
 				const { error } = await supabase.auth.signInWithOtp({
-					email: watch("email"),
+					email: emailValue,
 				});
 				if (error) throw error;
 				setShowOtpModal(true);
@@ -95,9 +96,10 @@ const JoinExpert = () => {
 	};
 
 	const handleVerifyOTP = async (otp) => {
+		const emailValue = watch("email")?.trim();
 		try {
 			const { error } = await supabase.auth.verifyOtp({
-				email: watch("email"),
+				email: emailValue,
 				token: otp,
 				type: "email",
 			});
