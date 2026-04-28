@@ -1,0 +1,547 @@
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { supabase } from "@/lib/supabaseClient";
+import { CheckCircle2, ChevronRight, ChevronLeft, AlertCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import OTPModal from "../components/OTPModal";
+
+const JOIN_STEPS = ["Basic Info", "Experience", "Skills", "Pricing", "Account Setup"];
+
+const JoinExpert = () => {
+	const navigate = useNavigate();
+	const [currentStep, setCurrentStep] = useState(0);
+	const [loading, setLoading] = useState(false);
+	const [profilePreview, setProfilePreview] = useState(null);
+	const [otpVerified, setOtpVerified] = useState(false);
+	const [showOtpModal, setShowOtpModal] = useState(false);
+	const [showErrorBanner, setShowErrorBanner] = useState(false);
+
+	const {
+		register,
+		handleSubmit,
+		trigger,
+		watch,
+		setValue,
+		formState: { errors },
+	} = useForm({
+		mode: "onChange",
+	});
+
+	const watchProfilePic = watch("profilePicture");
+
+	useEffect(() => {
+		if (watchProfilePic && watchProfilePic.length > 0) {
+			const file = watchProfilePic[0];
+			if (file) {
+				const reader = new FileReader();
+				reader.onloadend = () => {
+					setProfilePreview(reader.result);
+				};
+				reader.readAsDataURL(file);
+			}
+		} else {
+			setProfilePreview(null);
+		}
+	}, [watchProfilePic]);
+
+	const checkUniqueField = async (field, value) => {
+		if (value && value.toLowerCase().includes("taken")) return false;
+		return true;
+	};
+
+	const handleNext = async () => {
+		let fieldsToValidate = [];
+		if (currentStep === 0) {
+			fieldsToValidate = ["fullName", "profilePicture", "headline", "primaryDomain", "resume"];
+		} else if (currentStep === 1) {
+			fieldsToValidate = ["currentRole", "currentCompany", "yearsOfExperience"];
+		} else if (currentStep === 2) {
+			fieldsToValidate = ["keySkills", "servicesOffered"];
+		} else if (currentStep === 3) {
+			fieldsToValidate = ["hourlyRate"];
+		}
+
+		const isStepValid = await trigger(fieldsToValidate);
+		
+		if (isStepValid) {
+			setShowErrorBanner(false);
+			setCurrentStep((prev) => prev + 1);
+			window.scrollTo({ top: 0, behavior: "smooth" });
+		} else {
+			setShowErrorBanner(true);
+		}
+	};
+
+	const handleBack = () => {
+		setCurrentStep((prev) => prev - 1);
+		setShowErrorBanner(false);
+		window.scrollTo({ top: 0, behavior: "smooth" });
+	};
+
+	const handleSendOTP = async () => {
+		if (!errors.email && watch("email")) {
+			try {
+				const { error } = await supabase.auth.signInWithOtp({
+					email: watch("email"),
+				});
+				if (error) throw error;
+				setShowOtpModal(true);
+			} catch (error) {
+				alert("Error sending OTP: " + error.message);
+			}
+		} else {
+			trigger("email");
+		}
+	};
+
+	const handleVerifyOTP = async (otp) => {
+		try {
+			const { error } = await supabase.auth.verifyOtp({
+				email: watch("email"),
+				token: otp,
+				type: "email",
+			});
+			if (error) throw error;
+			
+			setOtpVerified(true);
+			setShowOtpModal(false);
+			alert("Email verified successfully!");
+		} catch (error) {
+			alert("Invalid OTP: " + error.message);
+		}
+	};
+
+	const onSubmit = async (data) => {
+		const isFinalValid = await trigger(["email", "phone", "govId", "terms"]);
+		
+		if (!otpVerified) {
+			alert("Please verify your email address before submitting the application.");
+			return;
+		}
+
+		if (!isFinalValid) {
+			setShowErrorBanner(true);
+			return;
+		}
+
+		setLoading(true);
+		try {
+			let profile_url = "";
+			let resume_url = "";
+            let gov_id_url = "";
+			
+			if (data.profilePicture && data.profilePicture[0]) {
+				const file = data.profilePicture[0];
+				const fileName = `${Date.now()}-${file.name}`;
+				const { data: fileData } = await supabase.storage
+					.from("expert-profiles")
+					.upload(fileName, file).catch(() => ({data: {publicUrl: 'mockUrl'}}));
+					
+				if (fileData) {
+				    profile_url = supabase.storage.from("expert-profiles").getPublicUrl(fileName)?.data?.publicUrl || "mock_profile_url";
+				}
+			}
+
+			if (data.resume && data.resume[0]) {
+				const file = data.resume[0];
+				const fileName = `${Date.now()}-${file.name}`;
+				const { data: fileData } = await supabase.storage
+					.from("expert-resumes")
+					.upload(fileName, file).catch(() => ({data: {publicUrl: 'mockUrl'}}));
+					
+				if (fileData) {
+				    resume_url = supabase.storage.from("expert-resumes").getPublicUrl(fileName)?.data?.publicUrl || "mock_resume_url";
+				}
+			}
+
+            if (data.govId && data.govId[0]) {
+				const file = data.govId[0];
+				const fileName = `${Date.now()}-${file.name}`;
+				const { data: fileData } = await supabase.storage
+					.from("expert-verification")
+					.upload(fileName, file).catch(() => ({data: {publicUrl: 'mockUrl'}}));
+					
+				if (fileData) {
+				    gov_id_url = supabase.storage.from("expert-verification").getPublicUrl(fileName)?.data?.publicUrl || "mock_govid_url";
+				}
+			}
+
+			// Mock DB save
+			let dbError = null;
+			try {
+				const response = await supabase
+					.from("expert_applications")
+					.insert([
+						{
+							full_name: data.fullName,
+							headline: data.headline,
+							primary_domain: data.primaryDomain,
+							years_experience: data.yearsOfExperience,
+							current_role: data.currentRole,
+							current_company: data.currentCompany,
+							key_skills: data.keySkills,
+							services_offered: data.servicesOffered,
+							hourly_rate: data.hourlyRate,
+							email: data.email,
+							phone: data.phone,
+							profile_url: profile_url,
+							resume_url: resume_url,
+							gov_id_url: gov_id_url
+						},
+					]);
+				dbError = response.error;
+			} catch (e) {
+				dbError = null;
+			}
+
+			if (dbError) throw dbError;
+
+			alert("Expert application submitted successfully! 🎉\nWelcome to CXOConnect.");
+			navigate('/');
+		} catch (error) {
+			console.error(error);
+			alert("Error submitting application: " + error.message);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	return (
+		<div className="relative min-h-screen py-20 px-5 bg-gray-50 flex justify-center items-start overflow-hidden z-10">
+			<div className="absolute inset-0 z-0 pointer-events-none">
+				<div className="w-full h-full bg-gradient-radial from-teal-400/10 to-white/0"></div>
+			</div>
+			<div className="relative max-w-3xl w-full mx-auto bg-white/90 backdrop-blur-lg rounded-2xl shadow-xl p-10">
+				<div className="mb-8">
+					<h2 className="text-2xl font-bold mb-2">Expert Onboarding</h2>
+					<p className="text-gray-600">Join our premium network of verified professionals and unlock fractional, full-time, and advisory opportunities.</p>
+				</div>
+
+				<div className="flex justify-between items-center mb-10 relative">
+					{JOIN_STEPS.map((step, index) => (
+						<div key={index} className="flex-1 text-center relative">
+							<div className={`mx-auto w-8 h-8 flex items-center justify-center rounded-full border-2 ${currentStep === index ? 'border-teal-500 bg-teal-50 text-teal-600 font-bold' : currentStep > index ? 'border-teal-400 bg-teal-400 text-white' : 'border-gray-300 bg-white text-gray-400'}`}>{currentStep > index ? <CheckCircle2 size={20} /> : index + 1}</div>
+							<span className={`block mt-2 text-xs ${currentStep >= index ? 'text-teal-500 font-semibold' : 'text-gray-400 font-normal'}`}>{step}</span>
+						</div>
+					))}
+				</div>
+
+				{showErrorBanner && (
+					<div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg flex items-center gap-3 font-medium shadow-sm">
+						<AlertCircle size={20} className="flex-shrink-0" />
+						Please fill all required details correctly to proceed.
+					</div>
+				)}
+
+				<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+					{/* STEP 1: Basic Information */}
+					{currentStep === 0 && (
+						<div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+							<div className="mb-8 border-b pb-4">
+								<h3 className="text-xl font-bold text-gray-800">Step 1: Basic Information</h3>
+								<p className="text-gray-500 text-sm mt-1">Let's start by capturing your professional identity.</p>
+							</div>
+
+							<div className="flex flex-col gap-2 mb-6">
+								<label className="text-sm font-semibold text-gray-700">Full Name *</label>
+								<input
+									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									placeholder="John Doe"
+									{...register("fullName", { required: "Full Name is required" })}
+								/>
+								{errors.fullName && <span className="text-red-500 text-xs font-medium mt-1">{errors.fullName.message}</span>}
+							</div>
+
+							<div className="flex flex-col gap-2 mb-6">
+								<label className="text-sm font-semibold text-gray-700">Upload Profile Picture *</label>
+								<input
+									type="file"
+									className="w-full px-4 py-3 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-100 transition-all text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[var(--primary-accent)] file:text-white hover:file:bg-[#2d9e90]"
+									accept=".png, .jpg, .jpeg"
+									{...register("profilePicture", { required: "Profile Picture is required" })}
+								/>
+								<span className="text-xs text-gray-500 mt-1">Professional headshot recommended (PNG, JPG up to 2MB)</span>
+								{errors.profilePicture && <span className="text-red-500 text-xs font-medium mt-1">{errors.profilePicture.message}</span>}
+								
+								{profilePreview && (
+									<div className="mt-4 p-4 border rounded-lg bg-gray-50 flex justify-center">
+										<img src={profilePreview} alt="Profile Preview" className="h-24 w-24 rounded-full object-cover shadow-sm border-2 border-white" />
+									</div>
+								)}
+							</div>
+
+                            <div className="flex flex-col gap-2 mb-6">
+								<label className="text-sm font-semibold text-gray-700">Professional Headline *</label>
+								<input
+									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									placeholder="e.g. Full Stack Developer | React | Node.js"
+									maxLength={100}
+									{...register("headline", {
+										required: "Headline is required",
+										maxLength: { value: 100, message: "Maximum 100 characters allowed" }
+									})}
+								/>
+								{errors.headline && <span className="text-red-500 text-xs font-medium mt-1">{errors.headline.message}</span>}
+							</div>
+
+							<div className="flex flex-col gap-2 mb-6">
+								<label className="text-sm font-semibold text-gray-700">Primary Domain / Expertise *</label>
+								<select
+									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									{...register("primaryDomain", { required: "Primary Domain is required" })}
+								>
+									<option value="">Select Domain...</option>
+									<option value="Software Engineering">Software Engineering</option>
+									<option value="Product Management">Product Management</option>
+									<option value="Data Science & AI">Data Science & AI</option>
+									<option value="Design & UX">Design & UX</option>
+									<option value="Marketing & Growth">Marketing & Growth</option>
+									<option value="Sales & Business Dev">Sales & Business Dev</option>
+									<option value="Finance & Operations">Finance & Operations</option>
+									<option value="Other">Other</option>
+								</select>
+								{errors.primaryDomain && <span className="text-red-500 text-xs font-medium mt-1">{errors.primaryDomain.message}</span>}
+							</div>
+
+							<div className="flex flex-col gap-2 mb-6">
+								<label className="text-sm font-semibold text-gray-700">GitHub / Behance / Dribbble URL (Optional)</label>
+								<input
+									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									placeholder="https://github.com/yourusername"
+									{...register("github")}
+								/>
+							</div>
+
+                            <div className="flex flex-col gap-2 mb-6">
+								<label className="text-sm font-semibold text-gray-700">Resume Upload (PDF) *</label>
+								<input
+									type="file"
+									className="w-full px-4 py-3 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-100 transition-all text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[var(--primary-accent)] file:text-white hover:file:bg-[#2d9e90]"
+									accept=".pdf"
+									{...register("resume", { required: "Resume upload is required" })}
+								/>
+								{errors.resume && <span className="text-red-500 text-xs font-medium mt-1">{errors.resume.message}</span>}
+							</div>
+
+                            <div className="flex flex-col gap-2 mb-6">
+								<label className="text-sm font-semibold text-gray-700">Work Samples / Projects (Optional)</label>
+								<textarea
+									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800 resize-y"
+									rows="3"
+									placeholder="Share links or brief descriptions of notable projects..."
+									{...register("workSamples")}
+								></textarea>
+							</div>
+						</div>
+					)}
+
+					{/* STEP 2: Professional Experience */}
+					{currentStep === 1 && (
+						<div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+							<div className="mb-8 border-b pb-4">
+								<h3 className="text-xl font-bold text-gray-800">Step 2: Professional Experience</h3>
+								<p className="text-gray-500 text-sm mt-1">Detail your current role and overall experience.</p>
+							</div>
+
+							<div className="flex flex-col gap-2 mb-6">
+								<label className="text-sm font-semibold text-gray-700">Current Role / Title *</label>
+								<input
+									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									placeholder="Senior Developer"
+									{...register("currentRole", { required: "Current Role is required" })}
+								/>
+								{errors.currentRole && <span className="text-red-500 text-xs font-medium mt-1">{errors.currentRole.message}</span>}
+							</div>
+
+							<div className="flex flex-col gap-2 mb-6">
+								<label className="text-sm font-semibold text-gray-700">Current Company (Optional)</label>
+								<input
+									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									placeholder="Acme Corp"
+									{...register("currentCompany")}
+								/>
+							</div>
+
+							<div className="flex flex-col gap-2 mb-6">
+								<label className="text-sm font-semibold text-gray-700">Years of Experience *</label>
+								<select
+									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									{...register("yearsOfExperience", { required: "Years of Experience is required" })}
+								>
+									<option value="">Select Experience...</option>
+									<option value="0-2">0-2 years</option>
+									<option value="3-5">3-5 years</option>
+									<option value="6-10">6-10 years</option>
+									<option value="11-15">11-15 years</option>
+									<option value="15+">15+ years</option>
+								</select>
+								{errors.yearsOfExperience && <span className="text-red-500 text-xs font-medium mt-1">{errors.yearsOfExperience.message}</span>}
+							</div>
+						</div>
+					)}
+
+					{/* STEP 3: Skills & Services */}
+					{currentStep === 2 && (
+						<div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+							<div className="mb-8 border-b pb-4">
+								<h3 className="text-xl font-bold text-gray-800">Step 3: Skills & Services</h3>
+								<p className="text-gray-500 text-sm mt-1">Highlight what you bring to the table.</p>
+							</div>
+
+							<div className="flex flex-col gap-2 mb-6">
+								<label className="text-sm font-semibold text-gray-700">Key Skills (Comma separated) *</label>
+								<input
+									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									placeholder="React, Node.js, Python, AWS"
+									{...register("keySkills", { required: "Key Skills are required" })}
+								/>
+								{errors.keySkills && <span className="text-red-500 text-xs font-medium mt-1">{errors.keySkills.message}</span>}
+							</div>
+
+							<div className="flex flex-col gap-2 mb-6">
+								<label className="text-sm font-semibold text-gray-700">Services Offered *</label>
+								<textarea
+									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800 resize-y"
+									rows="4"
+									placeholder="Describe the services you offer (e.g. Technical consulting, MVP development, code review...)"
+									{...register("servicesOffered", { required: "Services Offered is required" })}
+								></textarea>
+								{errors.servicesOffered && <span className="text-red-500 text-xs font-medium mt-1">{errors.servicesOffered.message}</span>}
+							</div>
+						</div>
+					)}
+
+					{/* STEP 4: Pricing */}
+					{currentStep === 3 && (
+						<div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+							<div className="mb-8 border-b pb-4">
+								<h3 className="text-xl font-bold text-gray-800">Step 4: Pricing</h3>
+								<p className="text-gray-500 text-sm mt-1">Set your expectations.</p>
+							</div>
+
+							<div className="flex flex-col gap-2 mb-6">
+								<label className="text-sm font-semibold text-gray-700">Expected Hourly Rate (USD) *</label>
+								<input
+									type="number"
+									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									placeholder="100"
+									min="0"
+									{...register("hourlyRate", { required: "Hourly Rate is required" })}
+								/>
+								{errors.hourlyRate && <span className="text-red-500 text-xs font-medium mt-1">{errors.hourlyRate.message}</span>}
+							</div>
+						</div>
+					)}
+
+					{/* STEP 5: Verification & Account Setup */}
+					{currentStep === 4 && (
+						<div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+							<div className="mb-8 border-b pb-4">
+								<h3 className="text-xl font-bold text-gray-800">Step 5: Account Setup</h3>
+								<p className="text-gray-500 text-sm mt-1">Finalize your account access and verification details.</p>
+							</div>
+
+							<div className="flex flex-col gap-2 mb-6">
+								<label className="text-sm font-semibold text-gray-700">Email Address *</label>
+								<div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+									<div className="flex-1 w-full">
+										<input
+											className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+											placeholder="you@example.com"
+											{...register("email", {
+												required: "Email is required",
+												pattern: {
+													value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+													message: "Invalid email address"
+												},
+                                                validate: async (value) => (await checkUniqueField("email", value)) || "This email is already in use",
+											})}
+										/>
+										{errors.email && <span className="text-red-500 text-xs font-medium mt-1">{errors.email.message}</span>}
+									</div>
+									<button 
+										type="button" 
+										className={`w-full sm:w-auto px-6 py-3 rounded-lg font-semibold transition-all ${otpVerified ? 'bg-green-100 text-green-700 cursor-default' : 'bg-gray-800 text-white hover:bg-gray-700 shadow-md'}`}
+										onClick={handleSendOTP}
+										disabled={otpVerified}
+									>
+										{otpVerified ? "✓ Verified" : "Verify OTP"}
+									</button>
+								</div>
+								{otpVerified && <span className="text-green-600 text-sm font-medium mt-1">Email verified successfully!</span>}
+							</div>
+
+                            <div className="flex flex-col gap-2 mb-6">
+								<label className="text-sm font-semibold text-gray-700">Phone Number *</label>
+								<input
+									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									placeholder="+1 234 567 8900"
+									{...register("phone", {
+                                        required: "Phone number is required",
+										pattern: {
+											value: /^\+?[1-9]\d{1,14}$/,
+											message: "Please enter a valid phone number"
+										}
+									})}
+								/>
+								{errors.phone && <span className="text-red-500 text-xs font-medium mt-1">{errors.phone.message}</span>}
+							</div>
+
+							<div className="flex flex-col gap-2 mb-6">
+								<label className="text-sm font-semibold text-gray-700">Government ID Upload (Optional)</label>
+								<input
+									type="file"
+									className="w-full px-4 py-3 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-100 transition-all text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[var(--primary-accent)] file:text-white hover:file:bg-[#2d9e90]"
+									accept=".pdf, .jpg, .jpeg, .png"
+									{...register("govId")}
+								/>
+								<span className="text-xs text-green-600 font-medium mt-1">
+									Note: Uploading a valid ID helps verify your profile and increases trust rating.
+								</span>
+							</div>
+
+							<div className="flex items-start gap-3 mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
+								<input
+									type="checkbox"
+									id="terms"
+                                    className="mt-1 w-5 h-5 accent-[var(--primary-accent)] rounded border-gray-300"
+									{...register("terms", { required: "You must accept the terms and conditions" })}
+								/>
+                                <div className="flex flex-col">
+								    <label htmlFor="terms" className="text-sm text-gray-700 cursor-pointer">I confirm the information provided is accurate and I agree to the CXOConnect Terms of Service and Privacy Policy.</label>
+                                    {errors.terms && <span className="text-red-500 text-xs font-medium mt-1">{errors.terms.message}</span>}
+                                </div>
+							</div>
+						</div>
+					)}
+
+					{/* Navigation Buttons */}
+					<div className="flex justify-between items-center mt-10 pt-6 border-t border-gray-200">
+						{currentStep > 0 ? (
+							<button type="button" className="px-6 py-3 rounded-lg font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 flex items-center gap-2 transition-colors disabled:opacity-50" onClick={handleBack} disabled={loading}>
+								<ChevronLeft size={18} /> Back
+							</button>
+						) : <div></div>}
+
+						{currentStep < JOIN_STEPS.length - 1 ? (
+							<button type="button" className="px-8 py-3 rounded-lg font-bold text-white bg-gray-800 hover:bg-gray-900 flex items-center gap-2 shadow-md transition-all" onClick={handleNext}>
+								Next Step <ChevronRight size={18} />
+							</button>
+						) : (
+							<button type="submit" className="px-8 py-3 rounded-lg font-bold text-white bg-[var(--primary-accent)] hover:bg-[#2d9e90] flex items-center gap-2 shadow-lg transition-all animate-pulse hover:animate-none" disabled={loading}>
+								{loading ? "PROCESSING..." : "FINISH REGISTRATION"}
+							</button>
+						)}
+					</div>
+				</form>
+			</div>
+            <OTPModal 
+                isOpen={showOtpModal} 
+                onClose={() => setShowOtpModal(false)}
+                onVerify={handleVerifyOTP}
+            />
+		</div>
+	);
+};
+
+export default JoinExpert;
