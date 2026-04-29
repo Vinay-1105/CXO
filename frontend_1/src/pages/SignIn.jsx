@@ -18,29 +18,6 @@ const SignIn = () => {
 	const [showOtp, setShowOtp] = useState(false);
 	const [resolvedEmail, setResolvedEmail] = useState("");
 
-	const verifyOtp = async (otp) => {
-		const res = await fetch("http://localhost:5000/api/auth/verify-otp", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				email: resolvedEmail,
-				otp,
-				role,
-			}),
-		});
-
-		const data = await res.json();
-
-		if (res.ok) {
-			localStorage.setItem("token", data.token);
-			navigate("/dashboard");
-		} else {
-			setError(data.error);
-		}
-	};
-
 	const handleSendOTP = async (e) => {
 		e.preventDefault();
 		setLoading(true);
@@ -52,69 +29,57 @@ const SignIn = () => {
 				const searchValue = identifier.trim();
 				console.log("🔍 Searching for:", `"${searchValue}"`);
 
-				// 2. Try exact match on company_handle
+				// Try exact match on company_handle or gstin
 				let query = supabase.from("company_applications").select("admin_email");
 
 				if (searchValue.startsWith("@")) {
-					query = query.eq("company_handle", searchValue);
+					const cleanHandle = searchValue.substring(1);
+					query = query.eq("company_handle", cleanHandle);
 				} else {
 					query = query.eq("gstin", searchValue);
 				}
 
-				const { data, error } = await query.maybeSingle();
+				const { data, error: dbError } = await query.maybeSingle();
 
-				console.log("Exact match result:", data);
-				console.log("Exact match error:", error);
+				if (dbError || !data) {
+					throw new Error("Company not found");
+				}
 
-				if (error || !data) {
-  throw new Error("Company not found");
-}
+				const targetEmail = data.admin_email?.trim();
+				setResolvedEmail(targetEmail);
 
-				const targetEmail = data.admin_email;
-setResolvedEmail(targetEmail);
+				const { error: authError } = await supabase.auth.signInWithOtp({
+					email: targetEmail,
+				});
 
-				const res = await fetch("http://localhost:5000/api/auth/send-otp", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ email: targetEmail }),
-});
-
-const dataRes = await res.json();
-
-if (!res.ok) throw new Error(dataRes.error);
+				if (authError) throw authError;
 
 				setMessage(`✅ OTP sent to ${targetEmail}`);
 				setShowOtp(true);
 			} else {
-				// Expert part remains same
 				// 👨‍💼 EXPERT LOGIN
+				const cleanIdentifier = identifier.trim();
 				if (loginMethod === "otp") {
-					// ✅ Use YOUR backend OTP
-					const res = await fetch("http://localhost:5000/api/auth/send-otp", {
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-						},
-						body: JSON.stringify({ email: identifier }),
-					});
-
-					const data = await res.json();
-
-					if (!res.ok) throw new Error(data.error);
-
-					setMessage(`✅ OTP sent to ${identifier}`);
-					  setShowOtp(true);
-				} else {
-					// ✅ Use Supabase for magic link
 					const { error } = await supabase.auth.signInWithOtp({
-						email: identifier,
-						options: {
-							emailRedirectTo: window.location.origin,
-						},
+						email: cleanIdentifier,
 					});
+
+					if (error) throw error;
+
+					setMessage(`✅ OTP sent to ${cleanIdentifier}`);
+					setShowOtp(true);
+				} else {
+					const response = await fetch("http://localhost:5000/api/auth/send-magic-link", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ email: cleanIdentifier }),
+					});
+					
+					const data = await response.json();
+					if (!response.ok) throw new Error(data.error || "Failed to send magic link");
+					
+					setMessage(`✅ Magic link sent to ${cleanIdentifier}`);
 				}
-				  if (error) throw error;
-				setMessage(`✅ Magic link sent to ${identifier}`);
 			}
 		} catch (err) {
 			console.error("SignIn Error:", err);

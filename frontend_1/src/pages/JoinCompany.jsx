@@ -14,6 +14,8 @@ const JoinCompany = () => {
 	const [logoPreview, setLogoPreview] = useState(null);
 	const [otpVerified, setOtpVerified] = useState(false);
 	const [showOtpModal, setShowOtpModal] = useState(false);
+	const [showAdminOtpModal, setShowAdminOtpModal] = useState(false);
+	const [adminOtpVerified, setAdminOtpVerified] = useState(false);
 	const [showErrorBanner, setShowErrorBanner] = useState(false);
 
 	const {
@@ -117,9 +119,50 @@ const JoinCompany = () => {
 		}
 	};
 
+	const handleSendAdminOTP = async () => {
+		const emailValue = watch("adminEmail")?.trim();
+		if (!errors.adminEmail && emailValue) {
+			try {
+				const { error } = await supabase.auth.signInWithOtp({
+					email: emailValue,
+				});
+				if (error) throw error;
+				setShowAdminOtpModal(true);
+			} catch (error) {
+				alert("Error sending OTP: " + error.message);
+			}
+		} else {
+			trigger("adminEmail");
+		}
+	};
+
+	const handleVerifyAdminOTP = async (otp) => {
+		const emailValue = watch("adminEmail")?.trim();
+		try {
+			const { error } = await supabase.auth.verifyOtp({
+				email: emailValue,
+				token: otp,
+				type: "email",
+			});
+			if (error) throw error;
+			
+			setAdminOtpVerified(true);
+			setShowAdminOtpModal(false);
+			alert("Admin Email verified successfully!");
+		} catch (error) {
+			alert("Invalid OTP: " + error.message);
+		}
+	};
+
 	const onSubmit = async (data) => {
 		// Final step validation
 		const isFinalValid = await trigger(["adminName", "adminEmail", "companyHandle", "gstin", "terms"]);
+		
+		if (!adminOtpVerified) {
+			alert("Please verify your Admin Email address before submitting the application.");
+			return;
+		}
+
 		if (!isFinalValid) {
 			setShowErrorBanner(true);
 			return;
@@ -488,18 +531,30 @@ const JoinCompany = () => {
 
 							<div className="flex flex-col gap-2 mb-6">
 								<label className="text-sm font-semibold text-gray-700">Admin Email Address *</label>
-								<input
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
-									placeholder="jane.doe@company.com"
-									{...register("adminEmail", {
-										required: "Admin Email is required",
-										pattern: {
-											value: /\S+@\S+\.\S+/,
-											message: "Invalid email address"
-										}
-									})}
-								/>
-								{errors.adminEmail && <span className="text-red-500 text-xs font-medium mt-1">{errors.adminEmail.message}</span>}
+								<div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+									<div className="flex-1 w-full">
+										<input
+											className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+											placeholder="jane.doe@company.com"
+											{...register("adminEmail", {
+												required: "Admin Email is required",
+												pattern: {
+													value: /\S+@\S+\.\S+/,
+													message: "Invalid email address"
+												}
+											})}
+										/>
+										{errors.adminEmail && <span className="text-red-500 text-xs font-medium mt-1">{errors.adminEmail.message}</span>}
+									</div>
+									<button 
+										type="button" 
+										className={`w-full sm:w-auto px-6 py-3 rounded-lg font-semibold transition-all ${adminOtpVerified ? 'bg-green-100 text-green-700 cursor-default' : 'bg-gray-800 text-white hover:bg-gray-700 shadow-md'}`}
+										onClick={handleSendAdminOTP}
+										disabled={adminOtpVerified}
+									>
+										{adminOtpVerified ? "✓ Verified" : "Verify OTP"}
+									</button>
+								</div>
 							</div>
 
 							<div className="flex flex-col gap-2 mb-6">
@@ -587,6 +642,11 @@ const JoinCompany = () => {
                 isOpen={showOtpModal} 
                 onClose={() => setShowOtpModal(false)}
                 onVerify={handleVerifyOTP}
+            />
+            <OTPModal 
+                isOpen={showAdminOtpModal} 
+                onClose={() => setShowAdminOtpModal(false)}
+                onVerify={handleVerifyAdminOTP}
             />
 		</div>
 	);
