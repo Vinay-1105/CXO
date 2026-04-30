@@ -1,5 +1,5 @@
 {
-  "name": "frontend_1",
+  "name": "cxoconnect",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,23 +10,26 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.100.0",
     "@tailwindcss/vite": "^4.2.2",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
+    "framer-motion": "^12.35.0",
+    "libphonenumber-js": "^1.11.1",
+    "lucide-react": "^0.469.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.51.3",
+    "react-router-dom": "^6.22.3",
     "tailwindcss": "^4.2.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.0",
     "@eslint/js": "^9.39.4",
-    "@rolldown/plugin-babel": "^0.2.2",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.1",
-    "babel-plugin-react-compiler": "^1.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.2.1",
     "eslint": "^9.39.4",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
-    "vite": "^8.0.4"
+    "vite": "^5.2.0"
   }
 }
