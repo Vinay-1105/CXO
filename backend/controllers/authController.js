@@ -1,5 +1,5 @@
 import { generateOtp } from "../utils/generateOtp.js";
-import { sendOtpMail } from "../utils/mailer.js";
+import { sendOtpMail, sendMagicLinkMail } from "../utils/mailer.js";
 import { supabaseAdmin } from "../utils/supabaseAdmin.js";
 import jwt from "jsonwebtoken";
 
@@ -88,5 +88,41 @@ export const verifyOtp = async (req, res) => {
   } catch (err) {
     console.error("Verify error:", err);
     res.status(500).json({ error: "Verification failed" });
+  }
+};
+
+// ================= SEND MAGIC LINK =================
+export const sendMagicLink = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: "Email is required" });
+  }
+
+  try {
+    // Generate Magic Link using Supabase Admin
+    const { data, error } = await supabaseAdmin.auth.admin.generateLink({
+      type: "magiclink",
+      email: email,
+    });
+
+    if (error) {
+      console.error("Supabase generateLink error:", error);
+      throw error;
+    }
+
+    const magicLink = data?.properties?.action_link;
+
+    if (!magicLink) {
+      throw new Error("Failed to extract magic link from Supabase response");
+    }
+
+    // Send the custom email using Resend
+    await sendMagicLinkMail(email, magicLink);
+
+    res.json({ message: "Magic link sent successfully" });
+  } catch (err) {
+    console.error("Magic link error:", err);
+    res.status(500).json({ error: "Failed to send magic link" });
   }
 };
