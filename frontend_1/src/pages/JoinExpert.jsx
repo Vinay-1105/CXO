@@ -45,8 +45,23 @@ const JoinExpert = () => {
 	}, [watchProfilePic]);
 
 	const checkUniqueField = async (field, value) => {
-		if (value && value.toLowerCase().includes("taken")) return false;
-		return true;
+		if (!value) return true;
+		try {
+			const { data, error } = await supabase
+				.from("expert_applications")
+				.select(field)
+				.eq(field, value)
+				.limit(1)
+				.maybeSingle();
+			if (error) {
+				console.error("Error checking unique field:", error);
+				return true;
+			}
+			return data === null;
+		} catch (error) {
+			console.error("Error checking unique field:", error);
+			return true;
+		}
 	};
 
 	const handleNext = async () => {

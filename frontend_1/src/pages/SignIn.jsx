@@ -39,9 +39,10 @@ const SignIn = () => {
 					query = query.eq("gstin", searchValue);
 				}
 
-				const { data, error: dbError } = await query.maybeSingle();
+				const { data, error: dbError } = await query.limit(1).maybeSingle();
 
 				if (dbError || !data) {
+					console.error("DB Error:", dbError);
 					throw new Error("Company not found");
 				}
 
@@ -72,7 +73,10 @@ const SignIn = () => {
 					const response = await fetch("http://localhost:5000/api/auth/send-magic-link", {
 						method: "POST",
 						headers: { "Content-Type": "application/json" },
-						body: JSON.stringify({ email: cleanIdentifier }),
+						body: JSON.stringify({ 
+							email: cleanIdentifier,
+							redirectTo: window.location.origin + "/expert-dashboard"
+						}),
 					});
 					
 					const data = await response.json();
@@ -193,7 +197,7 @@ const SignIn = () => {
 					<OTPBox
 						email={role === "company" ? resolvedEmail : identifier}
 						role={role}
-						onSuccess={() => navigate("/dashboard")}
+						onSuccess={() => navigate(role === "company" ? "/company-dashboard" : "/expert-dashboard")}
 					/>
 				)}
 			</div>
