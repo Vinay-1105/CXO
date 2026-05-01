@@ -1,7 +1,26 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-const token = localStorage.getItem("token");
+// Supabase configuration – read from Vite environment variables.
+// Fallback to empty strings for a safe development build.
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+let supabase;
+if (supabaseUrl && supabaseAnonKey) {
+  supabase = createClient(supabaseUrl, supabaseAnonKey);
+} else {
+  console.warn('Supabase environment variables not set – using mock client');
+  // Minimal mock implementation to avoid runtime crashes during development.
+  supabase = {
+    from: () => ({ select: () => ({ data: [], error: null }) }),
+    storage: {
+      from: () => ({
+        upload: async () => ({}),
+        getPublicUrl: () => ({ data: { publicUrl: '' } }),
+      }),
+    },
+    auth: { signInWithOtp: async () => ({ user: null, error: null }) },
+  };
+}
+
+export { supabase };

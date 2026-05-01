@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import OTPInput from "./OTPInput";
+import { supabase } from "@/lib/supabaseClient";
 
 const OTPBox = ({ email, role, onSuccess }) => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -21,25 +22,16 @@ const OTPBox = ({ email, role, onSuccess }) => {
   const handleVerify = async () => {
     setLoading(true);
 
-    const res = await fetch("http://localhost:5000/api/auth/verify-otp", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        otp: otp.join(""),
-        role,
-      }),
+    const { data, error } = await supabase.auth.verifyOtp({
+      email,
+      token: otp.join(""),
+      type: "email",
     });
 
-    const data = await res.json();
-
-    if (res.ok) {
-      localStorage.setItem("token", data.token);
-      onSuccess();
+    if (error) {
+      alert(error.message);
     } else {
-      alert(data.error);
+      onSuccess();
     }
 
     setLoading(false);
@@ -47,15 +39,12 @@ const OTPBox = ({ email, role, onSuccess }) => {
 
   // 🔁 RESEND
   const resendOtp = async () => {
-    await fetch("http://localhost:5000/api/auth/send-otp", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email }),
-    });
-
-    setTimer(30);
+    const { error } = await supabase.auth.signInWithOtp({ email });
+    if (error) {
+      alert(error.message);
+    } else {
+      setTimer(30);
+    }
   };
 
   return (

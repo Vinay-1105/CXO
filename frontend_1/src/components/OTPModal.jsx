@@ -2,12 +2,12 @@ import React, { useState, useRef, useEffect } from "react";
 
 
 const OTPModal = ({ isOpen, onClose, onVerify }) => {
-  const [otp, setOtp] = useState(["", "", "", ""]);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef([]);
 
   useEffect(() => {
     if (isOpen) {
-      setOtp(["", "", "", ""]);
+      setOtp(["", "", "", "", "", ""]);
       setTimeout(() => {
         if (inputRefs.current[0]) {
           inputRefs.current[0].focus();
@@ -27,7 +27,7 @@ const OTPModal = ({ isOpen, onClose, onVerify }) => {
     setOtp(newOtp);
 
     // Auto focus next
-    if (value && index < 3) {
+    if (value && index < 5) {
       inputRefs.current[index + 1].focus();
     }
   };
@@ -41,21 +41,21 @@ const OTPModal = ({ isOpen, onClose, onVerify }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const otpValue = otp.join("");
-    if (otpValue.length === 4) {
+    if (otpValue.length === 6) {
       onVerify(otpValue);
     } else {
-      alert("Please enter all 4 digits");
+      alert("Please enter all 6 digits");
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50">
-      <form className="w-64 bg-white flex flex-col items-center justify-center p-8 gap-5 rounded-xl shadow-lg relative animate-scale-up" onSubmit={handleSubmit}>
+      <form className="w-80 bg-white flex flex-col items-center justify-center p-8 gap-5 rounded-xl shadow-lg relative animate-scale-up" onSubmit={handleSubmit}>
         <span className="text-xl font-bold mb-2">Enter OTP</span>
         <p className="text-gray-600 text-sm mb-2 text-center">We have sent a verification code to your email</p>
 
         <div className="flex gap-2 mb-2">
-          {[0, 1, 2, 3].map((index) => (
+          {[0, 1, 2, 3, 4, 5].map((index) => (
             <input
               key={index}
               required
