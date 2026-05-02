@@ -47,9 +47,26 @@ const JoinCompany = () => {
 	}, [watchLogo]);
 
 	const checkUniqueField = async (field, value) => {
-		// Mock unique check - assume valid unless "taken"
-		if (value.toLowerCase().includes("taken")) return false;
-		return true;
+		// Map camelCase form fields to snake_case DB columns
+		const dbColumn = field === 'companyName' ? 'company_name' : 
+						 field === 'companyHandle' ? 'company_handle' : field;
+						 
+		try {
+			const { data, error } = await supabase
+				.from("company_applications")
+				.select(dbColumn)
+				.eq(dbColumn, value)
+				.limit(1)
+				.maybeSingle();
+			if (error) {
+				console.error("Error checking unique field:", error);
+				return true; // Allow on error
+			}
+			return data === null; // True if unique (not found)
+		} catch (error) {
+			console.error("Error checking unique field:", error);
+			return true;
+		}
 	};
 
 	const handleNext = async () => {
@@ -580,10 +597,13 @@ const JoinCompany = () => {
 							<div className="flex flex-col gap-2 mb-6">
 								<label className="text-sm font-semibold text-gray-700">GSTIN / Business Reg Number *</label>
 								<input
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800 uppercase"
+									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
 									placeholder="29ABCDE1234F2Z5"
 									{...register("gstin", {
 										required: "GSTIN is required",
+										onChange: (e) => {
+											setValue("gstin", e.target.value.toUpperCase(), { shouldValidate: true });
+										},
 										validate: async (value) => (await checkUniqueField("gstin", value)) || "GSTIN is already registered"
 									})}
 								/>

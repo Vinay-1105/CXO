@@ -5,6 +5,7 @@ import JoinCompany from './pages/JoinCompany';
 import JoinExpert from './pages/JoinExpert';
 import SignIn from './pages/SignIn';
 import CompanyDashboard from './pages/CompanyDashboard';
+import ExpertDashboard from './pages/ExpertDashboard';
 import { AuthModalProvider } from './components/AuthModalContext';
 import AuthModal from './components/AuthModal';
 
@@ -23,6 +24,7 @@ function App() {
               <Route path="/join-expert" element={<JoinExpert />} />
               <Route path="/signin" element={<SignIn />} />
               <Route path="/company-dashboard" element={<CompanyDashboard />} />
+              <Route path="/expert-dashboard" element={<ExpertDashboard />} />
             </Routes>
           </main>
         </div>

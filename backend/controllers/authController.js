@@ -93,7 +93,7 @@ export const verifyOtp = async (req, res) => {
 
 // ================= SEND MAGIC LINK =================
 export const sendMagicLink = async (req, res) => {
-  const { email } = req.body;
+  const { email, redirectTo } = req.body;
 
   if (!email) {
     return res.status(400).json({ error: "Email is required" });
@@ -104,6 +104,9 @@ export const sendMagicLink = async (req, res) => {
     const { data, error } = await supabaseAdmin.auth.admin.generateLink({
       type: "magiclink",
       email: email,
+      options: {
+        redirectTo: redirectTo || "http://localhost:5173/expert-dashboard"
+      }
     });
 
     if (error) {
