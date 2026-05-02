@@ -229,7 +229,7 @@ const JoinCompany = () => {
 			if (dbError) throw dbError;
 
 			alert("Company application submitted successfully! ✅");
-			navigate('/');
+			navigate('/company-dashboard');
 		} catch (error) {
 			console.error(error);
 			alert("Error submitting application: " + error.message);

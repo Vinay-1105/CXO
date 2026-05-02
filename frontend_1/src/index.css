@@ -1,6 +1,17 @@
 @import "tailwindcss";
 
-body { margin: 0; }
+@theme {
+  --color-primary-accent: #0eb59a;
+}
+
+:root {
+  --primary-accent: #0eb59a;
+}
+
+body { 
+  margin: 0; 
+  background-color: #fafafa;
+}
 
 #root {
   width: 100%;
