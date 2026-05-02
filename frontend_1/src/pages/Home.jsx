@@ -162,32 +162,33 @@ const Home = () => {
                         <div className="w-2 h-2 rounded-full bg-[#0eb59a]"></div>
                         Why choose us
                     </div>
-                    <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6 tracking-tight">Expert consulting tailored to<br />your business success</h2>
+                    <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6 tracking-tight">How It Works</h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <motion.div whileHover={{ y: -5 }} className="bg-white rounded-3xl p-10 md:p-14 border border-gray-100 shadow-md transition-all">
-                        <h3 className="text-3xl font-semibold text-gray-900 mb-10">Other Platforms</h3>
+                        <h3 className="text-3xl font-semibold text-gray-900 mb-10">For Companies</h3>
                         <div className="space-y-8">
                             <div className="flex gap-4">
                                 <div className="mt-1 text-gray-400"><Check size={24} /></div>
                                 <div>
-                                    <h4 className="text-xl font-medium text-gray-900 mb-2">Generic Matching</h4>
-                                    <p className="text-gray-500 leading-relaxed text-lg">Algorithm-only solutions that lack personalized insights and verified vetting.</p>
+                                    <h4 className="text-xl font-medium text-gray-900 mb-2">List your CXO-level vacancy</h4>
+                                    <p className="text-gray-500 leading-relaxed text-lg">Define your leadership need in minutes.</p>
                                 </div>
                             </div>
                             <div className="flex gap-4">
                                 <div className="mt-1 text-gray-400"><Check size={24} /></div>
                                 <div>
-                                    <h4 className="text-xl font-medium text-gray-900 mb-2">Limited Governance</h4>
-                                    <p className="text-gray-500 leading-relaxed text-lg">Clients are left to navigate complex projects with minimal PMO or expert support.</p>
+                                    <h4 className="text-xl font-medium text-gray-900 mb-2">Discover verified CXOs based on culture fit</h4>
+                                    <p className="text-gray-500 leading-relaxed text-lg">Get matched with verified senior leaders
+                                        AI-powered shortlisting of CXOs who fit your industry, stage, and culture, not just keywords</p>
                                 </div>
                             </div>
                             <div className="flex gap-4">
                                 <div className="mt-1 text-gray-400"><Check size={24} /></div>
                                 <div>
-                                    <h4 className="text-xl font-medium text-gray-900 mb-2">Hidden Fees</h4>
-                                    <p className="text-gray-500 leading-relaxed text-lg">Unexpected costs and additional charges that inflate your total investment.</p>
+                                    <h4 className="text-xl font-medium text-gray-900 mb-2">Hire with strategic onboarding tools</h4>
+                                    <p className="text-gray-500 leading-relaxed text-lg">Onboard with confidence and governance</p>
                                 </div>
                             </div>
                         </div>

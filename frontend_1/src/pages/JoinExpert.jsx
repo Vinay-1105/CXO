@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/lib/supabaseClient";
 import { CheckCircle2, ChevronRight, ChevronLeft, AlertCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import OTPModal from "../components/OTPModal";
 
 const JOIN_STEPS = ["Basic Info", "Experience", "Skills", "Pricing", "Account Setup"];
@@ -224,20 +224,34 @@ const JoinExpert = () => {
 	};
 
 	return (
-		<div className="relative min-h-screen py-20 px-5 bg-gray-50 flex justify-center items-start overflow-hidden z-10">
-			<div className="absolute inset-0 z-0 pointer-events-none">
-				<div className="w-full h-full bg-gradient-radial from-teal-400/10 to-white/0"></div>
+		<div className="flex min-h-screen bg-gray-50 flex-col lg:flex-row">
+			{/* Left Side: Branding Panel */}
+			<div className="hidden lg:flex flex-col w-[35%] bg-slate-100 p-12 justify-center items-center text-center z-20">
+				<Link to="/" className="font-serif text-4xl tracking-tight cursor-pointer text-gray-900 no-underline flex items-center gap-1 hover:opacity-90 transition-opacity mb-auto">
+					CXO<span className="text-teal-500">.</span>
+				</Link>
+				<div className="mb-auto mt-20 flex flex-col items-center">
+					<p className="text-gray-500 font-bold uppercase tracking-wider text-sm mb-4">Sign up</p>
+					<h1 className="text-5xl font-extrabold text-slate-800 leading-tight">Welcome to <br/>our Expert<br/>Site</h1>
+				</div>
 			</div>
-			<div className="relative max-w-3xl w-full mx-auto bg-white/90 backdrop-blur-lg rounded-2xl shadow-xl p-10">
-				<div className="mb-8">
+
+			{/* Right Side: Form Area */}
+			<div className="relative flex-1 flex items-center justify-center p-5 md:p-8 overflow-hidden z-10">
+				{/* Mobile Fallback Background */}
+				<div className="absolute inset-0 z-0 pointer-events-none md:hidden bg-gradient-to-br from-teal-400/10 to-transparent"></div>
+				
+				{/* Form Card */}
+				<div className="relative z-10 w-full max-w-2xl bg-white/95 backdrop-blur-xl rounded-3xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 p-6 md:p-8 border border-gray-100 animate-in fade-in zoom-in-95 duration-700">
+					<div className="mb-6">
 					<h2 className="text-2xl font-bold mb-2">Expert Onboarding</h2>
 					<p className="text-gray-600">Join our premium network of verified professionals and unlock fractional, full-time, and advisory opportunities.</p>
 				</div>
 
-				<div className="flex justify-between items-center mb-10 relative">
+				<div className="flex justify-between items-center mb-8 relative">
 					{JOIN_STEPS.map((step, index) => (
 						<div key={index} className="flex-1 text-center relative">
-							<div className={`mx-auto w-8 h-8 flex items-center justify-center rounded-full border-2 ${currentStep === index ? 'border-teal-500 bg-teal-50 text-teal-600 font-bold' : currentStep > index ? 'border-teal-400 bg-teal-400 text-white' : 'border-gray-300 bg-white text-gray-400'}`}>{currentStep > index ? <CheckCircle2 size={20} /> : index + 1}</div>
+							<div className={`mx-auto w-8 h-8 flex items-center justify-center rounded-full border-2 transition-colors duration-300 ${currentStep === index ? 'border-teal-500 bg-teal-50 text-teal-600 font-bold' : currentStep > index ? 'border-teal-400 bg-teal-400 text-white' : 'border-gray-300 bg-white text-gray-400'}`}>{currentStep > index ? <CheckCircle2 size={20} /> : index + 1}</div>
 							<span className={`block mt-2 text-xs ${currentStep >= index ? 'text-teal-500 font-semibold' : 'text-gray-400 font-normal'}`}>{step}</span>
 						</div>
 					))}
@@ -254,31 +268,31 @@ const JoinExpert = () => {
 					{/* STEP 1: Basic Information */}
 					{currentStep === 0 && (
 						<div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-							<div className="mb-8 border-b pb-4">
+							<div className="mb-6 border-b pb-4">
 								<h3 className="text-xl font-bold text-gray-800">Step 1: Basic Information</h3>
 								<p className="text-gray-500 text-sm mt-1">Let's start by capturing your professional identity.</p>
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Full Name *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Full Name *</label>
 								<input
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									placeholder="John Doe"
 									{...register("fullName", { required: "Full Name is required" })}
 								/>
-								{errors.fullName && <span className="text-red-500 text-xs font-medium mt-1">{errors.fullName.message}</span>}
+								{errors.fullName && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.fullName.message}</span>}
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Upload Profile Picture *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Upload Profile Picture *</label>
 								<input
 									type="file"
-									className="w-full px-4 py-3 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-100 transition-all text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[var(--primary-accent)] file:text-white hover:file:bg-[#2d9e90]"
+									className="w-full px-4 py-2.5 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-100 hover:border-teal-400 transition-all duration-200 text-gray-600 file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-teal-500 file:text-white hover:file:bg-teal-600 file:transition-colors file:duration-150 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:scale-[1.01]"
 									accept=".png, .jpg, .jpeg"
 									{...register("profilePicture", { required: "Profile Picture is required" })}
 								/>
 								<span className="text-xs text-gray-500 mt-1">Professional headshot recommended (PNG, JPG up to 2MB)</span>
-								{errors.profilePicture && <span className="text-red-500 text-xs font-medium mt-1">{errors.profilePicture.message}</span>}
+								{errors.profilePicture && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.profilePicture.message}</span>}
 
 								{profilePreview && (
 									<div className="mt-4 p-4 border rounded-lg bg-gray-50 flex justify-center">
@@ -287,10 +301,10 @@ const JoinExpert = () => {
 								)}
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Professional Headline *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Professional Headline *</label>
 								<input
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									placeholder="e.g. Full Stack Developer | React | Node.js"
 									maxLength={100}
 									{...register("headline", {
@@ -298,13 +312,13 @@ const JoinExpert = () => {
 										maxLength: { value: 100, message: "Maximum 100 characters allowed" }
 									})}
 								/>
-								{errors.headline && <span className="text-red-500 text-xs font-medium mt-1">{errors.headline.message}</span>}
+								{errors.headline && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.headline.message}</span>}
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Primary Domain / Expertise *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Primary Domain / Expertise *</label>
 								<select
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									{...register("primaryDomain", { required: "Primary Domain is required" })}
 								>
 									<option value="">Select Domain...</option>
@@ -317,33 +331,33 @@ const JoinExpert = () => {
 									<option value="Finance & Operations">Finance & Operations</option>
 									<option value="Other">Other</option>
 								</select>
-								{errors.primaryDomain && <span className="text-red-500 text-xs font-medium mt-1">{errors.primaryDomain.message}</span>}
+								{errors.primaryDomain && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.primaryDomain.message}</span>}
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">GitHub / Behance / Dribbble URL (Optional)</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">GitHub / Behance / Dribbble URL (Optional)</label>
 								<input
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									placeholder="https://github.com/yourusername"
 									{...register("github")}
 								/>
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Resume Upload (PDF) *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Resume Upload (PDF) *</label>
 								<input
 									type="file"
-									className="w-full px-4 py-3 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-100 transition-all text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[var(--primary-accent)] file:text-white hover:file:bg-[#2d9e90]"
+									className="w-full px-4 py-2.5 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-100 hover:border-teal-400 transition-all duration-200 text-gray-600 file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-teal-500 file:text-white hover:file:bg-teal-600 file:transition-colors file:duration-150 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:scale-[1.01]"
 									accept=".pdf"
 									{...register("resume", { required: "Resume upload is required" })}
 								/>
-								{errors.resume && <span className="text-red-500 text-xs font-medium mt-1">{errors.resume.message}</span>}
+								{errors.resume && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.resume.message}</span>}
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Work Samples / Projects (Optional)</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Work Samples / Projects (Optional)</label>
 								<textarea
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800 resize-y"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800 resize-y"
 									rows="3"
 									placeholder="Share links or brief descriptions of notable projects..."
 									{...register("workSamples")}
@@ -355,34 +369,34 @@ const JoinExpert = () => {
 					{/* STEP 2: Professional Experience */}
 					{currentStep === 1 && (
 						<div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-							<div className="mb-8 border-b pb-4">
+							<div className="mb-6 border-b pb-4">
 								<h3 className="text-xl font-bold text-gray-800">Step 2: Professional Experience</h3>
 								<p className="text-gray-500 text-sm mt-1">Detail your current role and overall experience.</p>
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Current Role / Title *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Current Role / Title *</label>
 								<input
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									placeholder="Senior Developer"
 									{...register("currentRole", { required: "Current Role is required" })}
 								/>
-								{errors.currentRole && <span className="text-red-500 text-xs font-medium mt-1">{errors.currentRole.message}</span>}
+								{errors.currentRole && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.currentRole.message}</span>}
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Current Company (Optional)</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Current Company (Optional)</label>
 								<input
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									placeholder="Acme Corp"
 									{...register("currentCompany")}
 								/>
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Years of Experience *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Years of Experience *</label>
 								<select
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									{...register("yearsOfExperience", { required: "Years of Experience is required" })}
 								>
 									<option value="">Select Experience...</option>
@@ -392,7 +406,7 @@ const JoinExpert = () => {
 									<option value="11-15">11-15 years</option>
 									<option value="15+">15+ years</option>
 								</select>
-								{errors.yearsOfExperience && <span className="text-red-500 text-xs font-medium mt-1">{errors.yearsOfExperience.message}</span>}
+								{errors.yearsOfExperience && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.yearsOfExperience.message}</span>}
 							</div>
 						</div>
 					)}
@@ -400,30 +414,30 @@ const JoinExpert = () => {
 					{/* STEP 3: Skills & Services */}
 					{currentStep === 2 && (
 						<div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-							<div className="mb-8 border-b pb-4">
+							<div className="mb-6 border-b pb-4">
 								<h3 className="text-xl font-bold text-gray-800">Step 3: Skills & Services</h3>
 								<p className="text-gray-500 text-sm mt-1">Highlight what you bring to the table.</p>
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Key Skills (Comma separated) *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Key Skills (Comma separated) *</label>
 								<input
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									placeholder="React, Node.js, Python, AWS"
 									{...register("keySkills", { required: "Key Skills are required" })}
 								/>
-								{errors.keySkills && <span className="text-red-500 text-xs font-medium mt-1">{errors.keySkills.message}</span>}
+								{errors.keySkills && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.keySkills.message}</span>}
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Services Offered *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Services Offered *</label>
 								<textarea
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800 resize-y"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800 resize-y"
 									rows="4"
 									placeholder="Describe the services you offer (e.g. Technical consulting, MVP development, code review...)"
 									{...register("servicesOffered", { required: "Services Offered is required" })}
 								></textarea>
-								{errors.servicesOffered && <span className="text-red-500 text-xs font-medium mt-1">{errors.servicesOffered.message}</span>}
+								{errors.servicesOffered && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.servicesOffered.message}</span>}
 							</div>
 						</div>
 					)}
@@ -431,21 +445,21 @@ const JoinExpert = () => {
 					{/* STEP 4: Pricing */}
 					{currentStep === 3 && (
 						<div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-							<div className="mb-8 border-b pb-4">
+							<div className="mb-6 border-b pb-4">
 								<h3 className="text-xl font-bold text-gray-800">Step 4: Pricing</h3>
 								<p className="text-gray-500 text-sm mt-1">Set your expectations.</p>
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Expected Hourly Rate (USD) *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Expected Hourly Rate (USD) *</label>
 								<input
 									type="number"
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									placeholder="100"
 									min="0"
 									{...register("hourlyRate", { required: "Hourly Rate is required" })}
 								/>
-								{errors.hourlyRate && <span className="text-red-500 text-xs font-medium mt-1">{errors.hourlyRate.message}</span>}
+								{errors.hourlyRate && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.hourlyRate.message}</span>}
 							</div>
 						</div>
 					)}
@@ -453,17 +467,17 @@ const JoinExpert = () => {
 					{/* STEP 5: Verification & Account Setup */}
 					{currentStep === 4 && (
 						<div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-							<div className="mb-8 border-b pb-4">
+							<div className="mb-6 border-b pb-4">
 								<h3 className="text-xl font-bold text-gray-800">Step 5: Account Setup</h3>
 								<p className="text-gray-500 text-sm mt-1">Finalize your account access and verification details.</p>
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Email Address *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Email Address *</label>
 								<div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
 									<div className="flex-1 w-full">
 										<input
-											className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+											className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 											placeholder="you@example.com"
 											{...register("email", {
 												required: "Email is required",
@@ -474,11 +488,11 @@ const JoinExpert = () => {
 												validate: async (value) => (await checkUniqueField("email", value)) || "This email is already in use",
 											})}
 										/>
-										{errors.email && <span className="text-red-500 text-xs font-medium mt-1">{errors.email.message}</span>}
+										{errors.email && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.email.message}</span>}
 									</div>
 									<button
 										type="button"
-										className={`w-full sm:w-auto px-6 py-3 rounded-lg font-semibold transition-all ${otpVerified ? 'bg-green-100 text-green-700 cursor-default' : 'bg-gray-800 text-white hover:bg-gray-700 shadow-md'}`}
+										className={`w-full sm:w-auto px-6 py-2.5 rounded-lg font-semibold transition-all duration-150 ${otpVerified ? 'bg-green-100 text-green-700 cursor-default' : 'bg-gray-800 text-white hover:bg-gray-700 shadow-md hover:scale-105 hover:shadow-lg active:scale-95'}`}
 										onClick={handleSendOTP}
 										disabled={otpVerified}
 									>
@@ -488,10 +502,10 @@ const JoinExpert = () => {
 								{otpVerified && <span className="text-green-600 text-sm font-medium mt-1">Email verified successfully!</span>}
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Phone Number *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Phone Number *</label>
 								<input
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									placeholder="+1 234 567 8900"
 									{...register("phone", {
 										required: "Phone number is required",
@@ -501,14 +515,14 @@ const JoinExpert = () => {
 										}
 									})}
 								/>
-								{errors.phone && <span className="text-red-500 text-xs font-medium mt-1">{errors.phone.message}</span>}
+								{errors.phone && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.phone.message}</span>}
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Government ID Upload (Optional)</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Government ID Upload (Optional)</label>
 								<input
 									type="file"
-									className="w-full px-4 py-3 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-100 transition-all text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[var(--primary-accent)] file:text-white hover:file:bg-[#2d9e90]"
+									className="w-full px-4 py-2.5 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-100 hover:border-teal-400 transition-all duration-200 text-gray-600 file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-teal-500 file:text-white hover:file:bg-teal-600 file:transition-colors file:duration-150 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:scale-[1.01]"
 									accept=".pdf, .jpg, .jpeg, .png"
 									{...register("govId")}
 								/>
@@ -526,7 +540,7 @@ const JoinExpert = () => {
 								/>
 								<div className="flex flex-col">
 									<label htmlFor="terms" className="text-sm text-gray-700 cursor-pointer">I confirm the information provided is accurate and I agree to the CXOConnect Terms of Service and Privacy Policy.</label>
-									{errors.terms && <span className="text-red-500 text-xs font-medium mt-1">{errors.terms.message}</span>}
+									{errors.terms && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.terms.message}</span>}
 								</div>
 							</div>
 						</div>
@@ -535,22 +549,23 @@ const JoinExpert = () => {
 					{/* Navigation Buttons */}
 					<div className="flex justify-between items-center mt-10 pt-6 border-t border-gray-200">
 						{currentStep > 0 ? (
-							<button type="button" className="px-6 py-3 rounded-lg font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 flex items-center gap-2 transition-colors disabled:opacity-50" onClick={handleBack} disabled={loading}>
+							<button type="button" className="px-6 py-2.5 rounded-lg font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 flex items-center gap-2 hover:scale-105 hover:shadow-lg active:scale-95 transition-all duration-150 disabled:opacity-50 disabled:hover:scale-100 disabled:hover:shadow-none" onClick={handleBack} disabled={loading}>
 								<ChevronLeft size={18} /> Back
 							</button>
 						) : <div></div>}
 
 						{currentStep < JOIN_STEPS.length - 1 ? (
-							<button type="button" className="px-8 py-3 rounded-lg font-bold text-white bg-gray-800 hover:bg-gray-900 flex items-center gap-2 shadow-md transition-all" onClick={handleNext}>
+							<button type="button" className="px-8 py-2.5 rounded-lg font-bold text-white bg-gray-800 hover:bg-gray-900 flex items-center gap-2 shadow-md hover:scale-105 hover:shadow-lg active:scale-95 transition-all duration-150" onClick={handleNext}>
 								Next Step <ChevronRight size={18} />
 							</button>
 						) : (
-							<button type="submit" className="px-8 py-3 rounded-lg font-bold text-white bg-[var(--primary-accent)] hover:bg-[#2d9e90] flex items-center gap-2 shadow-lg transition-all animate-pulse hover:animate-none" disabled={loading}>
+							<button type="submit" className="px-8 py-2.5 rounded-lg font-bold text-white bg-teal-500 hover:bg-teal-600 flex items-center gap-2 shadow-lg hover:scale-105 hover:shadow-xl active:scale-95 transition-all duration-150" disabled={loading}>
 								{loading ? "PROCESSING..." : "FINISH REGISTRATION"}
 							</button>
 						)}
 					</div>
 				</form>
+			</div>
 			</div>
 			<OTPModal
 				isOpen={showOtpModal}

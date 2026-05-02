@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/lib/supabaseClient";
 import { CheckCircle2, ChevronRight, ChevronLeft, AlertCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import OTPModal from "../components/OTPModal";
 
 const JOIN_STEPS = ["Basic Details", "Company Info", "Online Presence", "Account Setup"];
@@ -256,19 +256,33 @@ const JoinCompany = () => {
 	};
 
 	return (
-		<div className="relative min-h-screen py-20 px-5 bg-gray-50 flex justify-center items-start overflow-hidden z-10">
-			<div className="absolute inset-0 z-0 pointer-events-none">
-				<div className="w-full h-full bg-gradient-radial from-teal-400/10 to-white/0"></div>
+		<div className="flex min-h-screen bg-gray-50 flex-col lg:flex-row">
+			{/* Left Side: Branding Panel */}
+			<div className="hidden lg:flex flex-col w-[35%] bg-slate-100 p-12 justify-center items-center text-center z-20">
+				<Link to="/" className="font-serif text-4xl tracking-tight cursor-pointer text-gray-900 no-underline flex items-center gap-1 hover:opacity-90 transition-opacity mb-auto">
+					CXO<span className="text-teal-500">.</span>
+				</Link>
+				<div className="mb-auto mt-20 flex flex-col items-center">
+					<p className="text-gray-500 font-bold uppercase tracking-wider text-sm mb-4">Sign up</p>
+					<h1 className="text-5xl font-extrabold text-slate-800 leading-tight">Welcome to <br/>our Company<br/>Site</h1>
+				</div>
 			</div>
-			<div className="relative max-w-3xl w-full mx-auto bg-white/90 backdrop-blur-lg rounded-2xl shadow-xl p-10">
-				<div className="mb-8">
+
+			{/* Right Side: Form Area */}
+			<div className="relative flex-1 flex items-center justify-center p-5 md:p-8 overflow-hidden z-10">
+				{/* Mobile Fallback Background */}
+				<div className="absolute inset-0 z-0 pointer-events-none md:hidden bg-gradient-to-br from-teal-400/10 to-transparent"></div>
+				
+				{/* Form Card */}
+				<div className="relative z-10 w-full max-w-2xl bg-white/95 backdrop-blur-xl rounded-3xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 p-6 md:p-8 border border-gray-100 animate-in fade-in zoom-in-95 duration-700">
+					<div className="mb-6">
 					<h2 className="text-2xl font-bold mb-2">Company Onboarding</h2>
 					<p className="text-gray-600">Join our network and unlock opportunities for your organization.</p>
 				</div>
-				<div className="flex justify-between items-center mb-10 relative">
+				<div className="flex justify-between items-center mb-8 relative">
 					{JOIN_STEPS.map((step, index) => (
 						<div key={index} className="flex-1 text-center relative">
-							<div className={`mx-auto w-8 h-8 flex items-center justify-center rounded-full border-2 ${currentStep === index ? 'border-teal-500 bg-teal-50 text-teal-600 font-bold' : currentStep > index ? 'border-teal-400 bg-teal-400 text-white' : 'border-gray-300 bg-white text-gray-400'}`}>{currentStep > index ? <CheckCircle2 size={20} /> : index + 1}</div>
+							<div className={`mx-auto w-8 h-8 flex items-center justify-center rounded-full border-2 transition-colors duration-300 ${currentStep === index ? 'border-teal-500 bg-teal-50 text-teal-600 font-bold' : currentStep > index ? 'border-teal-400 bg-teal-400 text-white' : 'border-gray-300 bg-white text-gray-400'}`}>{currentStep > index ? <CheckCircle2 size={20} /> : index + 1}</div>
 							<span className={`block mt-2 text-xs ${currentStep >= index ? 'text-teal-500 font-semibold' : 'text-gray-400 font-normal'}`}>{step}</span>
 						</div>
 					))}
@@ -284,34 +298,34 @@ const JoinCompany = () => {
 					{/* STEP 1: Basic Company Details */}
 					{currentStep === 0 && (
 						<div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-							<div className="mb-8 border-b pb-4">
+							<div className="mb-6 border-b pb-4">
 								<h3 className="text-xl font-bold text-gray-800">Step 1: Basic Company Details</h3>
 								<p className="text-gray-500 text-sm mt-1">Let's establish your organization's identity on CXOConnect.</p>
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Company Name *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Company Name *</label>
 								<input
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									placeholder="e.g. Acme Corp"
 									{...register("companyName", {
 										required: "Company Name is required",
 										validate: async (value) => (await checkUniqueField("companyName", value)) || "This company name already exists",
 									})}
 								/>
-								{errors.companyName && <span className="text-red-500 text-xs font-medium mt-1">{errors.companyName.message}</span>}
+								{errors.companyName && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.companyName.message}</span>}
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Upload Company Logo *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Upload Company Logo *</label>
 								<input
 									type="file"
-									className="w-full px-4 py-3 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-100 transition-all text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[var(--primary-accent)] file:text-white hover:file:bg-[#2d9e90]"
+									className="w-full px-4 py-2.5 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-100 hover:border-teal-400 transition-all duration-200 text-gray-600 file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-teal-500 file:text-white hover:file:bg-teal-600 file:transition-colors file:duration-150 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:scale-[1.01]"
 									accept=".png, .jpg, .jpeg"
 									{...register("logo", { required: "Logo is required" })}
 								/>
 								<span className="text-xs text-gray-500 mt-1">PNG, JPG up to 2MB</span>
-								{errors.logo && <span className="text-red-500 text-xs font-medium mt-1">{errors.logo.message}</span>}
+								{errors.logo && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.logo.message}</span>}
 
 								{logoPreview && (
 									<div className="mt-4 p-4 border rounded-lg bg-gray-50 flex justify-center">
@@ -320,10 +334,10 @@ const JoinCompany = () => {
 								)}
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Industry *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Industry *</label>
 								<select
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									{...register("industry", { required: "Industry is required" })}
 								>
 									<option value="">Select Industry...</option>
@@ -340,13 +354,13 @@ const JoinCompany = () => {
 									<option value="Real Estate">Real Estate</option>
 									<option value="Other">Other</option>
 								</select>
-								{errors.industry && <span className="text-red-500 text-xs font-medium mt-1">{errors.industry.message}</span>}
+								{errors.industry && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.industry.message}</span>}
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Company Tagline *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Company Tagline *</label>
 								<input
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									placeholder="e.g. Building the future of AI"
 									maxLength={80}
 									{...register("tagline", {
@@ -354,7 +368,7 @@ const JoinCompany = () => {
 										maxLength: { value: 80, message: "Maximum 80 characters allowed" }
 									})}
 								/>
-								{errors.tagline && <span className="text-red-500 text-xs font-medium mt-1">{errors.tagline.message}</span>}
+								{errors.tagline && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.tagline.message}</span>}
 							</div>
 						</div>
 					)}
@@ -362,15 +376,15 @@ const JoinCompany = () => {
 					{/* STEP 2: Company Information */}
 					{currentStep === 1 && (
 						<div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-							<div className="mb-8 border-b pb-4">
+							<div className="mb-6 border-b pb-4">
 								<h3 className="text-xl font-bold text-gray-800">Step 2: Company Information</h3>
 								<p className="text-gray-500 text-sm mt-1">Tell us more about your organization's scale and history.</p>
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">About the Company *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">About the Company *</label>
 								<textarea
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800 resize-y"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800 resize-y"
 									rows="4"
 									placeholder="Describe your company's mission and vision..."
 									{...register("about", {
@@ -378,13 +392,13 @@ const JoinCompany = () => {
 										minLength: { value: 50, message: "Minimum 50 characters required" }
 									})}
 								></textarea>
-								{errors.about && <span className="text-red-500 text-xs font-medium mt-1">{errors.about.message}</span>}
+								{errors.about && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.about.message}</span>}
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Organisation Type *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Organisation Type *</label>
 								<select
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									{...register("orgType", { required: "Organisation Type is required" })}
 								>
 									<option value="">Select Type...</option>
@@ -394,13 +408,13 @@ const JoinCompany = () => {
 									<option value="NGO / Non-Profit">NGO / Non-Profit</option>
 									<option value="Government Organization">Government Organization</option>
 								</select>
-								{errors.orgType && <span className="text-red-500 text-xs font-medium mt-1">{errors.orgType.message}</span>}
+								{errors.orgType && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.orgType.message}</span>}
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Organization Size *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Organization Size *</label>
 								<select
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									{...register("orgSize", { required: "Organization Size is required" })}
 								>
 									<option value="">Select Size...</option>
@@ -410,13 +424,13 @@ const JoinCompany = () => {
 									<option value="201-500">201–500 employees</option>
 									<option value="500+">500+ employees</option>
 								</select>
-								{errors.orgSize && <span className="text-red-500 text-xs font-medium mt-1">{errors.orgSize.message}</span>}
+								{errors.orgSize && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.orgSize.message}</span>}
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Company Age *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Company Age *</label>
 								<select
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									{...register("companyAge", { required: "Company Age is required" })}
 								>
 									<option value="">Select Age...</option>
@@ -425,7 +439,7 @@ const JoinCompany = () => {
 									<option value="3-7 Years">3–7 Years</option>
 									<option value="7+ Years">7+ Years</option>
 								</select>
-								{errors.companyAge && <span className="text-red-500 text-xs font-medium mt-1">{errors.companyAge.message}</span>}
+								{errors.companyAge && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.companyAge.message}</span>}
 							</div>
 						</div>
 					)}
@@ -433,15 +447,15 @@ const JoinCompany = () => {
 					{/* STEP 3: Online Presence */}
 					{currentStep === 2 && (
 						<div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-							<div className="mb-8 border-b pb-4">
+							<div className="mb-6 border-b pb-4">
 								<h3 className="text-xl font-bold text-gray-800">Step 3: Online Presence</h3>
 								<p className="text-gray-500 text-sm mt-1">Add your digital footprint so professionals can learn more about you.</p>
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Website URL *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Website URL *</label>
 								<input
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									placeholder="https://www.example.com"
 									{...register("website", {
 										required: "Website URL is required",
@@ -451,15 +465,15 @@ const JoinCompany = () => {
 										}
 									})}
 								/>
-								{errors.website && <span className="text-red-500 text-xs font-medium mt-1">{errors.website.message}</span>}
+								{errors.website && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.website.message}</span>}
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Official Company Email *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Official Company Email *</label>
 								<div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
 									<div className="flex-1 w-full">
 										<input
-											className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+											className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 											placeholder="hr@company.com"
 											{...register("email", {
 												required: "Company Email is required",
@@ -469,11 +483,11 @@ const JoinCompany = () => {
 												}
 											})}
 										/>
-										{errors.email && <span className="text-red-500 text-xs font-medium mt-1">{errors.email.message}</span>}
+										{errors.email && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.email.message}</span>}
 									</div>
 									<button
 										type="button"
-										className={`w-full sm:w-auto px-6 py-3 rounded-lg font-semibold transition-all ${otpVerified ? 'bg-green-100 text-green-700 cursor-default' : 'bg-gray-800 text-white hover:bg-gray-700 shadow-md'}`}
+										className={`w-full sm:w-auto px-6 py-2.5 rounded-lg font-semibold transition-all duration-150 ${otpVerified ? 'bg-green-100 text-green-700 cursor-default' : 'bg-gray-800 text-white hover:bg-gray-700 shadow-md hover:scale-105 hover:shadow-lg active:scale-95'}`}
 										onClick={handleSendOTP}
 										disabled={otpVerified}
 									>
@@ -483,10 +497,10 @@ const JoinCompany = () => {
 								{otpVerified && <span className="text-green-600 text-sm font-medium mt-1">Email verified successfully!</span>}
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Contact Number *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Contact Number *</label>
 								<input
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									placeholder="+1 234 567 8900"
 									{...register("contactNumber", {
 										required: "Contact Number is required",
@@ -496,31 +510,31 @@ const JoinCompany = () => {
 										}
 									})}
 								/>
-								{errors.contactNumber && <span className="text-red-500 text-xs font-medium mt-1">{errors.contactNumber.message}</span>}
+								{errors.contactNumber && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.contactNumber.message}</span>}
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">LinkedIn Page (Optional)</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">LinkedIn Page (Optional)</label>
 								<input
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									placeholder="https://linkedin.com/company/yourcompany"
 									{...register("linkedin")}
 								/>
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Instagram Handle (Optional)</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Instagram Handle (Optional)</label>
 								<input
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									placeholder="@yourcompany"
 									{...register("instagram")}
 								/>
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">X (Twitter) Handle (Optional)</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">X (Twitter) Handle (Optional)</label>
 								<input
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									placeholder="@yourcompany"
 									{...register("twitter")}
 								/>
@@ -531,27 +545,27 @@ const JoinCompany = () => {
 					{/* STEP 4: Verification & Account Setup */}
 					{currentStep === 3 && (
 						<div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-							<div className="mb-8 border-b pb-4">
+							<div className="mb-6 border-b pb-4">
 								<h3 className="text-xl font-bold text-gray-800">Step 4: Account Setup</h3>
 								<p className="text-gray-500 text-sm mt-1">Finalize your account access and verification details.</p>
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Account Admin Name *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Account Admin Name *</label>
 								<input
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									placeholder="Jane Doe"
 									{...register("adminName", { required: "Admin Name is required" })}
 								/>
-								{errors.adminName && <span className="text-red-500 text-xs font-medium mt-1">{errors.adminName.message}</span>}
+								{errors.adminName && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.adminName.message}</span>}
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Admin Email Address *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Admin Email Address *</label>
 								<div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
 									<div className="flex-1 w-full">
 										<input
-											className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+											className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 											placeholder="jane.doe@company.com"
 											{...register("adminEmail", {
 												required: "Admin Email is required",
@@ -561,11 +575,11 @@ const JoinCompany = () => {
 												}
 											})}
 										/>
-										{errors.adminEmail && <span className="text-red-500 text-xs font-medium mt-1">{errors.adminEmail.message}</span>}
+										{errors.adminEmail && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.adminEmail.message}</span>}
 									</div>
 									<button
 										type="button"
-										className={`w-full sm:w-auto px-6 py-3 rounded-lg font-semibold transition-all ${adminOtpVerified ? 'bg-green-100 text-green-700 cursor-default' : 'bg-gray-800 text-white hover:bg-gray-700 shadow-md'}`}
+										className={`w-full sm:w-auto px-6 py-2.5 rounded-lg font-semibold transition-all duration-150 ${adminOtpVerified ? 'bg-green-100 text-green-700 cursor-default' : 'bg-gray-800 text-white hover:bg-gray-700 shadow-md hover:scale-105 hover:shadow-lg active:scale-95'}`}
 										onClick={handleSendAdminOTP}
 										disabled={adminOtpVerified}
 									>
@@ -574,8 +588,8 @@ const JoinCompany = () => {
 								</div>
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Choose Company Handle *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Choose Company Handle *</label>
 								<div className="relative">
 									<span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400 font-semibold">@</span>
 									<input
@@ -591,13 +605,13 @@ const JoinCompany = () => {
 										})}
 									/>
 								</div>
-								{errors.companyHandle && <span className="text-red-500 text-xs font-medium mt-1">{errors.companyHandle.message}</span>}
+								{errors.companyHandle && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.companyHandle.message}</span>}
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">GSTIN / Business Reg Number *</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">GSTIN / Business Reg Number *</label>
 								<input
-									className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									placeholder="29ABCDE1234F2Z5"
 									{...register("gstin", {
 										required: "GSTIN is required",
@@ -607,14 +621,14 @@ const JoinCompany = () => {
 										validate: async (value) => (await checkUniqueField("gstin", value)) || "GSTIN is already registered"
 									})}
 								/>
-								{errors.gstin && <span className="text-red-500 text-xs font-medium mt-1">{errors.gstin.message}</span>}
+								{errors.gstin && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.gstin.message}</span>}
 							</div>
 
-							<div className="flex flex-col gap-2 mb-6">
-								<label className="text-sm font-semibold text-gray-700">Certificate of Incorporation (Optional)</label>
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Certificate of Incorporation (Optional)</label>
 								<input
 									type="file"
-									className="w-full px-4 py-3 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-100 transition-all text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[var(--primary-accent)] file:text-white hover:file:bg-[#2d9e90]"
+									className="w-full px-4 py-2.5 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-100 hover:border-teal-400 transition-all duration-200 text-gray-600 file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-teal-500 file:text-white hover:file:bg-teal-600 file:transition-colors file:duration-150 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:scale-[1.01]"
 									accept=".pdf, .jpg, .jpeg, .png"
 									{...register("gstCertificate")}
 								/>
@@ -632,7 +646,7 @@ const JoinCompany = () => {
 								/>
 								<div className="flex flex-col">
 									<label htmlFor="terms" className="text-sm text-gray-700 cursor-pointer">I confirm the information provided is accurate and I agree to the CXOConnect Terms of Service and Privacy Policy.</label>
-									{errors.terms && <span className="text-red-500 text-xs font-medium mt-1">{errors.terms.message}</span>}
+									{errors.terms && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.terms.message}</span>}
 								</div>
 							</div>
 						</div>
@@ -641,22 +655,23 @@ const JoinCompany = () => {
 					{/* Navigation Buttons */}
 					<div className="flex justify-between items-center mt-10 pt-6 border-t border-gray-200">
 						{currentStep > 0 ? (
-							<button type="button" className="px-6 py-3 rounded-lg font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 flex items-center gap-2 transition-colors disabled:opacity-50" onClick={handleBack} disabled={loading}>
+							<button type="button" className="px-6 py-2.5 rounded-lg font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 flex items-center gap-2 hover:scale-105 hover:shadow-lg active:scale-95 transition-all duration-150 disabled:opacity-50 disabled:hover:scale-100 disabled:hover:shadow-none" onClick={handleBack} disabled={loading}>
 								<ChevronLeft size={18} /> Back
 							</button>
 						) : <div></div>}
 
 						{currentStep < JOIN_STEPS.length - 1 ? (
-							<button type="button" className="px-8 py-3 rounded-lg font-bold text-white bg-gray-800 hover:bg-gray-900 flex items-center gap-2 shadow-md transition-all" onClick={handleNext}>
+							<button type="button" className="px-8 py-2.5 rounded-lg font-bold text-white bg-gray-800 hover:bg-gray-900 flex items-center gap-2 shadow-md hover:scale-105 hover:shadow-lg active:scale-95 transition-all duration-150" onClick={handleNext}>
 								Next Step <ChevronRight size={18} />
 							</button>
 						) : (
-							<button type="submit" className="px-8 py-3 rounded-lg font-bold text-white bg-[var(--primary-accent)] hover:bg-[#2d9e90] flex items-center gap-2 shadow-lg transition-all animate-pulse hover:animate-none" disabled={loading}>
+							<button type="submit" className="px-8 py-2.5 rounded-lg font-bold text-white bg-teal-500 hover:bg-teal-600 flex items-center gap-2 shadow-lg hover:scale-105 hover:shadow-xl active:scale-95 transition-all duration-150" disabled={loading}>
 								{loading ? "PROCESSING..." : "SUBMIT APPLICATION"}
 							</button>
 						)}
 					</div>
 				</form>
+			</div>
 			</div>
 			<OTPModal
 				isOpen={showOtpModal}

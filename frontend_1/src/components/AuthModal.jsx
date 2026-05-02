@@ -36,10 +36,10 @@ const AuthModal = () => {
                                 <p className="text-gray-500 text-lg">Create a new account to get started.</p>
                             </div>
                             <div className="flex flex-col gap-4 w-full max-w-xs">
-                                <button className="bg-[#0eb59a] hover:bg-[#0b9680] text-white font-medium py-3 px-6 rounded-md transition-all shadow-sm hover:shadow-md w-full" onClick={() => handleNavigation('/join-company')}>
+                                <button className="bg-[#0eb59a] hover:bg-[#0b9680] text-white font-medium py-3 px-6 rounded-md transition-all duration-200 ease-out shadow-sm hover:shadow-lg hover:-translate-y-1 hover:scale-105 active:scale-95 w-full" onClick={() => handleNavigation('/join-company')}>
                                     Join as a company
                                 </button>
-                                <button className="bg-[#0eb59a] hover:bg-[#0b9680] text-white font-medium py-3 px-6 rounded-md transition-all shadow-sm hover:shadow-md w-full" onClick={() => handleNavigation('/join-expert')}>
+                                <button className="bg-[#0eb59a] hover:bg-[#0b9680] text-white font-medium py-3 px-6 rounded-md transition-all duration-200 ease-out shadow-sm hover:shadow-lg hover:-translate-y-1 hover:scale-105 active:scale-95 w-full" onClick={() => handleNavigation('/join-expert')}>
                                     Join as an expert
                                 </button>
                             </div>
@@ -59,10 +59,10 @@ const AuthModal = () => {
                                 <p className="text-gray-500 text-lg">Welcome back! Please log in.</p>
                             </div>
                             <div className="flex flex-col gap-4 w-full max-w-xs">
-                                <button className="bg-gray-50 hover:bg-gray-100 border border-gray-100 text-gray-800 font-medium py-3 px-6 rounded-md transition-all w-full shadow-sm" onClick={() => handleNavigation('/signin?role=company')}>
+                                <button className="bg-gray-50 hover:bg-white border border-gray-100 hover:border-gray-200 text-gray-800 font-medium py-3 px-6 rounded-md transition-all duration-200 ease-out shadow-sm hover:shadow-md hover:-translate-y-1 hover:scale-105 active:scale-95 w-full" onClick={() => handleNavigation('/signin?role=company')}>
                                     Already a company
                                 </button>
-                                <button className="bg-gray-50 hover:bg-gray-100 border border-gray-100 text-gray-800 font-medium py-3 px-6 rounded-md transition-all w-full shadow-sm" onClick={() => handleNavigation('/signin?role=expert')}>
+                                <button className="bg-gray-50 hover:bg-white border border-gray-100 hover:border-gray-200 text-gray-800 font-medium py-3 px-6 rounded-md transition-all duration-200 ease-out shadow-sm hover:shadow-md hover:-translate-y-1 hover:scale-105 active:scale-95 w-full" onClick={() => handleNavigation('/signin?role=expert')}>
                                     Already an expert
                                 </button>
                             </div>
