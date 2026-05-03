@@ -4,6 +4,8 @@ import Home from './pages/Home';
 import JoinCompany from './pages/JoinCompany';
 import JoinExpert from './pages/JoinExpert';
 import SignIn from './pages/SignIn';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 import CompanyDashboard from './pages/CompanyDashboard';
 import ExpertDashboard from './pages/ExpertDashboard';
 import { AuthModalProvider } from './components/AuthModalContext';
@@ -11,7 +13,7 @@ import AuthModal from './components/AuthModal';
 
 const AppContent = () => {
   const location = useLocation();
-  const showNavbar = location.pathname === '/';
+  const showNavbar = location.pathname === '/' || location.pathname === '/privacy-policy' || location.pathname === '/terms-of-service';
 
   return (
     <AuthModalProvider>
@@ -25,6 +27,8 @@ const AppContent = () => {
             <Route path="/join-expert" element={<JoinExpert />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/company-dashboard" element={<CompanyDashboard />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
           </Routes>
         </main>
       </div>
