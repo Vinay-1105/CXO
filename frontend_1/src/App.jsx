@@ -29,6 +29,7 @@ const AppContent = () => {
             <Route path="/company-dashboard" element={<CompanyDashboard />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="/expert-dashboard" element={<ExpertDashboard />} />
           </Routes>
         </main>
       </div>
