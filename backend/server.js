@@ -6,10 +6,25 @@ import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 
 const app = express();
+const port = process.env.PORT || 5000;
 
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:5173",
+  process.env.FRONTEND_URL, // Your Vercel URL
+].filter(Boolean); // removes undefined if FRONTEND_URL isn't set yet
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+}));
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 
-app.listen(5000, () => console.log("🚀 Server running on port 5000"));
+app.listen(port, () => console.log(`🚀 Server running on port ${port}`));
