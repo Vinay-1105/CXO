@@ -235,7 +235,13 @@ const JoinCompany = () => {
 							admin_name: data.adminName,
 							admin_email: data.adminEmail,
 							gstin: data.gstin,
-							company_handle: data.companyHandle
+							company_handle: data.companyHandle,
+							contact_number: data.contactNumber,
+							company_age: data.companyAge,
+							instagram: data.instagram,
+							linkedin: data.linkedin,
+							github: data.github,
+							twitter: data.twitter
 						},
 					]);
 				dbError = response.error;
@@ -537,6 +543,15 @@ const JoinCompany = () => {
 									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									placeholder="@yourcompany"
 									{...register("twitter")}
+								/>
+							</div>
+
+							<div className="group flex flex-col gap-1.5 mb-4">
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">GitHub Organization (Optional)</label>
+								<input
+									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
+									placeholder="https://github.com/yourcompany"
+									{...register("github")}
 								/>
 							</div>
 						</div>

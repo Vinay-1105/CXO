@@ -203,7 +203,9 @@ const JoinExpert = () => {
 							phone: data.phone,
 							profile_url: profile_url,
 							resume_url: resume_url,
-							gov_id_url: gov_id_url
+							gov_id_url: gov_id_url,
+							github: data.github,
+							work_samples: data.workSamples
 						},
 					]);
 				dbError = response.error;
