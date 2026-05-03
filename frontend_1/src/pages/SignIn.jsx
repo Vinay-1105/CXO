@@ -70,7 +70,7 @@ const SignIn = () => {
 					setMessage(`✅ OTP sent to ${cleanIdentifier}`);
 					setShowOtp(true);
 				} else {
-					const response = await fetch("http://localhost:5000/api/auth/send-magic-link", {
+					const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/send-magic-link`, {
 						method: "POST",
 						headers: { "Content-Type": "application/json" },
 						body: JSON.stringify({ 
