@@ -26,20 +26,15 @@ const SignIn = () => {
 
 		try {
 			if (role === "company") {
-				const searchValue = identifier.trim();
-				console.log("🔍 Searching for:", `"${searchValue}"`);
+				const cleanEmail = identifier.trim();
+				console.log("🔍 Searching for company admin email:", `"${cleanEmail}"`);
 
-				// Try exact match on company_handle or gstin
-				let query = supabase.from("company_applications").select("admin_email");
-
-				if (searchValue.startsWith("@")) {
-					const cleanHandle = searchValue.substring(1);
-					query = query.eq("company_handle", cleanHandle);
-				} else {
-					query = query.eq("gstin", searchValue);
-				}
-
-				const { data, error: dbError } = await query.limit(1).maybeSingle();
+				const { data, error: dbError } = await supabase
+					.from("company_applications")
+					.select("admin_email")
+					.eq("admin_email", cleanEmail)
+					.limit(1)
+					.maybeSingle();
 
 				if (dbError || !data) {
 					console.error("DB Error:", dbError);
@@ -104,7 +99,7 @@ const SignIn = () => {
 					<h2 className="text-3xl font-bold text-gray-800 mb-3">Sign In as {role === "company" ? "Company" : "Expert"}</h2>
 					<p className="text-gray-500">
 						{role === "company"
-							? "Enter your Company Handle or GSTIN"
+							? "Enter your Admin Email Address"
 							: "Enter your registered email"}
 					</p>
 				</div>
@@ -113,15 +108,15 @@ const SignIn = () => {
 					<div className="flex flex-col gap-2">
 						<label className="text-sm font-semibold text-gray-700">
 							{role === "company"
-								? "Company Handle (@companyname) or GSTIN *"
+								? "Admin Email Address *"
 								: "Registered Email Address *"}
 						</label>
 						<input
-							type="text"
+							type="email"
 							className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
 							placeholder={
 								role === "company"
-									? "@companyhandle or 29ABCDE1234F2Z5"
+									? "admin@company.com"
 									: "you@example.com"
 							}
 							value={identifier}

@@ -4,6 +4,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { CheckCircle2, ChevronRight, ChevronLeft, AlertCircle } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import OTPModal from "../components/OTPModal";
+import SuccessModal from "../components/SuccessModal";
 
 const JOIN_STEPS = ["Basic Info", "Experience", "Skills", "Pricing", "Account Setup"];
 
@@ -15,6 +16,7 @@ const JoinExpert = () => {
 	const [otpVerified, setOtpVerified] = useState(false);
 	const [showOtpModal, setShowOtpModal] = useState(false);
 	const [showErrorBanner, setShowErrorBanner] = useState(false);
+	const [showSuccessModal, setShowSuccessModal] = useState(false);
 
 	const {
 		register,
@@ -215,8 +217,7 @@ const JoinExpert = () => {
 
 			if (dbError) throw dbError;
 
-			alert("Expert application submitted successfully! 🎉\nWelcome to CXOConnect.");
-			navigate('/');
+			setShowSuccessModal(true);
 		} catch (error) {
 			console.error(error);
 			alert("Error submitting application: " + error.message);
@@ -345,8 +346,14 @@ const JoinExpert = () => {
 								<input
 									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									placeholder="https://github.com/yourusername"
-									{...register("github")}
+									{...register("github", {
+										pattern: {
+											value: /^https:\/\/(www\.)?(github\.com|behance\.net|dribbble\.com)\/.+/,
+											message: "Must be a valid GitHub, Behance, or Dribbble URL starting with https://"
+										}
+									})}
 								/>
+								{errors.github && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.github.message}</span>}
 							</div>
 
 							<div className="group flex flex-col gap-1.5 mb-4">
@@ -578,6 +585,7 @@ const JoinExpert = () => {
 				onClose={() => setShowOtpModal(false)}
 				onVerify={handleVerifyOTP}
 			/>
+			<SuccessModal isOpen={showSuccessModal} role="expert" />
 		</div>
 	);
 };
