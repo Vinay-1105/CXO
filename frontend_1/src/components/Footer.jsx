@@ -57,9 +57,11 @@ const Footer = () => {
                             className="inline-block cursor-pointer mb-8 group" 
                             onClick={(e) => handleNavigation(e, '/')}
                         >
-                            <h2 className="text-5xl font-serif font-bold tracking-tight flex items-center gap-1 text-white transition-all duration-300">
-                                CXO<span className="text-[#0eb59a] group-hover:scale-125 group-hover:text-teal-400 transition-all duration-300 inline-block">.</span>
-                            </h2>
+                            <img 
+                                src="/LOGO_FINAL.png" 
+                                alt="CXO Connect" 
+                                className="h-12 w-auto object-contain transition-opacity duration-200 hover:opacity-80 [filter:brightness(0)_saturate(100%)_invert(55%)_sepia(60%)_saturate(400%)_hue-rotate(120deg)]"
+                            />
                         </div>
                         <p className="text-gray-400 text-lg leading-relaxed font-light mb-10 transition-colors">
                             The premier two-sided marketplace connecting forward-thinking companies with vetted senior professionals. When you need experience, not headcount.

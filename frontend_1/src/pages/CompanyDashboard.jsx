@@ -77,8 +77,12 @@ const CompanyDashboard = () => {
       <aside className="w-16 bg-[#0B1437] flex flex-col justify-between shrink-0 z-50 py-4 shadow-xl">
         <div className="flex flex-col items-center gap-4">
           {/* Logo Mark */}
-          <div className="w-10 h-10 flex items-center justify-center font-serif font-bold italic text-white text-xl mb-4 border-b border-white/10 pb-4">
-             C<span className="text-[#0eb59a]">.</span>
+          <div className="w-10 h-10 flex items-center justify-center mb-4 border-b border-white/10 pb-4">
+             <img 
+                src="/LOGO_FINAL.png" 
+                alt="CXO" 
+                className="h-7 w-auto object-contain [filter:brightness(0)_saturate(100%)_invert(55%)_sepia(60%)_saturate(400%)_hue-rotate(120deg)]"
+             />
           </div>
 
           {/* Top Icons */}
@@ -209,7 +213,13 @@ const CompanyDashboard = () => {
                 <button onClick={() => setIsPanelOpen(!isPanelOpen)} className="md:hidden text-gray-500 hover:text-[#0B1437]">
                     <LayoutDashboard size={24} />
                 </button>
-                <div className="text-2xl font-serif italic font-bold text-[#0B1437] md:hidden">CXO<span className="text-[#0eb59a]">.</span></div>
+                <div className="flex items-center md:hidden">
+                    <img 
+                        src="/LOGO_FINAL.png" 
+                        alt="CXO Connect" 
+                        className="h-8 w-auto object-contain [filter:brightness(0)_saturate(100%)_invert(55%)_sepia(60%)_saturate(400%)_hue-rotate(120deg)]"
+                    />
+                </div>
             </div>
 
             <div className="flex-1 flex justify-center px-4">
