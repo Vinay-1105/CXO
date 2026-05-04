@@ -95,10 +95,7 @@ const Home = () => {
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     transition={{ duration: 1, ease: "easeOut" }}
                 >
-                    <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#e6f7f4] border border-[#0eb59a]/20 mb-8 text-sm font-semibold text-[#134e40] tracking-wide shadow-sm hover:scale-105 transition-transform cursor-default">
-                        <span className="w-2 h-2 rounded-full bg-[#0eb59a] animate-pulse"></span>
-                        Premium Executive Talent
-                    </div>
+
                     <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-bold tracking-tight mb-8 leading-[1.1] text-[#111827]">
                         Elite Expertise.<br /><span className="text-[#134e40]">Scalable Leadership.</span>
                     </h1>
@@ -156,33 +153,45 @@ const Home = () => {
                 <div className="bg-[#134e40] rounded-[2.5rem] overflow-hidden flex flex-col md:flex-row shadow-2xl relative group">
                     <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-white/5 blur-[100px] rounded-full pointer-events-none group-hover:scale-150 transition-transform duration-1000"></div>
                     <div className="flex-1 p-12 md:p-16 flex flex-col justify-center relative z-10">
-                        <div className="flex items-center gap-2 text-white/80 mb-6 text-sm">
-                            <span className="text-yellow-400 tracking-widest">★★★★★</span>
-                            <span className="font-medium">Trusted Ecosystem</span>
+                        <div className="flex items-center gap-2 text-yellow-400 mb-8">
+                            <Star size={16} fill="currentColor" />
+                            <Star size={16} fill="currentColor" />
+                            <Star size={16} fill="currentColor" />
+                            <Star size={16} fill="currentColor" />
+                            <Star size={16} fill="currentColor" />
+                            <span className="text-white/80 text-sm font-medium ml-2 tracking-wider uppercase">Trusted Ecosystem</span>
                         </div>
-                        <h2 className="text-4xl md:text-5xl font-serif font-bold text-white mb-6 leading-tight">
-                            The premier two-sided marketplace.
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-8 leading-[1.1]">
+                            The premier <br className="hidden md:block" />two-sided marketplace.
                         </h2>
-                        <p className="text-teal-50 text-lg leading-relaxed mb-8 opacity-90 font-light">
-                            CXOConnect bridges the gap between:
-                        </p>
-                        <ul className="text-teal-50 space-y-4 mb-8">
-                            <li className="flex items-start gap-3">
-                                <CheckCircle2 className="text-[#0eb59a] mt-1 shrink-0" size={20} />
-                                <span><strong className="text-white">Companies</strong> (Startups, SMEs, Enterprises) seeking impactful leadership.</span>
-                            </li>
-                            <li className="flex items-start gap-3">
-                                <CheckCircle2 className="text-[#0eb59a] mt-1 shrink-0" size={20} />
-                                <span><strong className="text-white">Senior Professionals</strong> (CXOs, Directors, PMOs, Advisors) seeking flexible engagements.</span>
-                            </li>
-                        </ul>
-                        <p className="text-teal-50 text-base leading-relaxed mb-10 opacity-90 font-light border-l-4 border-[#0eb59a] pl-4">
-                            Supported by an expert Admin / PMO layer to ensure trust, meticulous vetting, governance, and seamless managed delivery for fractional leadership and interim roles.
-                        </p>
-                        <div className="flex items-center gap-6">
-                            <button onClick={openModal} className="bg-white text-[#134e40] px-8 py-4 rounded-full font-bold hover:bg-[#0eb59a] hover:text-white transition-all duration-300 inline-flex items-center gap-2 group/btn">
-                                Explore Engagements <ChevronRight size={20} className="group-hover/btn:translate-x-1 transition-transform" />
-                            </button>
+                        <div className="space-y-8 max-w-xl">
+                            <p className="text-teal-50 text-xl font-light opacity-90">
+                                CXOConnect bridges the gap between:
+                            </p>
+                            <ul className="space-y-6">
+                                <li className="flex items-start gap-4">
+                                    <div className="mt-1 bg-[#0eb59a]/20 p-1 rounded-full">
+                                        <Check className="text-[#0eb59a]" size={16} />
+                                    </div>
+                                    <span className="text-teal-50 text-lg leading-relaxed"><strong className="text-white font-semibold">Companies</strong> seeking impactful leadership.</span>
+                                </li>
+                                <li className="flex items-start gap-4">
+                                    <div className="mt-1 bg-[#0eb59a]/20 p-1 rounded-full">
+                                        <Check className="text-[#0eb59a]" size={16} />
+                                    </div>
+                                    <span className="text-teal-50 text-lg leading-relaxed"><strong className="text-white font-semibold">Senior Professionals</strong> seeking flexible engagements.</span>
+                                </li>
+                            </ul>
+                            <div className="border-l-4 border-[#0eb59a] pl-6 py-2 bg-white/5 rounded-r-2xl">
+                                <p className="text-teal-50/90 text-base leading-relaxed italic">
+                                    Supported by an expert Admin layer to ensure trust, meticulous vetting, and seamless managed delivery.
+                                </p>
+                            </div>
+                            <div className="pt-4">
+                                <button onClick={openModal} className="bg-white text-[#134e40] px-10 py-4 rounded-full font-bold hover:bg-[#0eb59a] hover:text-white transition-all duration-300 inline-flex items-center gap-3 group/btn shadow-lg">
+                                    Explore Engagements <ChevronRight size={20} className="group-hover/btn:translate-x-1 transition-transform" />
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div className="flex-1 min-h-[400px] relative overflow-hidden">
@@ -192,21 +201,21 @@ const Home = () => {
             </AnimatedSection>
 
             {/* How It Works Section */}
-            <AnimatedSection className="py-24 w-full relative overflow-hidden bg-[#fafafa]" id="about-us">
-                <div className="max-w-[90rem] mx-auto px-6 relative z-10">
-                    <div className="bg-white rounded-[2.5rem] border border-gray-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)] py-20 px-8 lg:px-20 relative overflow-hidden">
+            <AnimatedSection className="py-20 w-full relative overflow-hidden bg-[#fafafa]" id="about-us">
+                <div className="max-w-7xl mx-auto px-6 relative z-10">
+                    <div className="bg-white rounded-[2.5rem] border border-gray-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)] py-16 px-8 lg:px-16 relative overflow-hidden">
                         {/* Background Ambient Blurs for Light Theme */}
                         <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-[#0eb59a]/5 rounded-full blur-[100px] pointer-events-none"></div>
                         <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#134e40]/5 rounded-full blur-[100px] pointer-events-none"></div>
 
-                        <div className="text-center mb-20 relative z-10">
+                        <div className="text-center mb-16 relative z-10">
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                             >
-                                <h2 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 tracking-tight font-serif">How It Works</h2>
-                                <p className="text-2xl text-gray-500 font-light">Two distinct journeys, one perfect match</p>
+                                <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight font-serif">How It Works</h2>
+                                <p className="text-xl text-gray-500 font-light">Two distinct journeys, one perfect match</p>
                             </motion.div>
                         </div>
 
@@ -215,104 +224,104 @@ const Home = () => {
                             <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-gray-200 to-transparent -translate-x-1/2"></div>
 
                             {/* For CXOs Column */}
-                            <div className="lg:pr-24 flex flex-col gap-12">
+                            <div className="lg:pr-16 flex flex-col gap-10">
                                 <div className="text-center lg:text-left">
-                                    <h3 className="text-4xl font-bold text-[#0eb59a] mb-4 tracking-tight">For CXOs</h3>
-                                    <p className="text-gray-500 text-xl font-light">Your path to meaningful leadership roles</p>
+                                    <h3 className="text-3xl font-bold text-[#0eb59a] mb-3 tracking-tight">For CXOs</h3>
+                                    <p className="text-gray-500 text-lg font-light">Your path to meaningful leadership roles</p>
                                 </div>
 
                                 <div className="space-y-12">
                                     {/* Item 1 */}
                                     <motion.div 
                                         whileHover={{ x: 10 }}
-                                        className="flex flex-col sm:flex-row items-center sm:items-start gap-6 group text-center sm:text-left"
+                                        className="flex flex-col sm:flex-row items-center sm:items-start gap-5 group text-center sm:text-left"
                                     >
-                                        <div className="shrink-0 w-16 h-16 rounded-2xl bg-[#f0fdfa] border border-[#ccfbf1] flex items-center justify-center text-[#0eb59a] shadow-sm group-hover:scale-110 group-hover:shadow-md group-hover:bg-[#0eb59a] group-hover:text-white transition-all duration-300">
-                                            <Edit size={28} />
+                                        <div className="shrink-0 w-14 h-14 rounded-2xl bg-[#f0fdfa] border border-[#ccfbf1] flex items-center justify-center text-[#0eb59a] shadow-sm group-hover:scale-110 group-hover:shadow-md group-hover:bg-[#0eb59a] group-hover:text-white transition-all duration-300">
+                                            <Edit size={24} />
                                         </div>
                                         <div>
-                                            <h4 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-[#0eb59a] transition-colors">Build your leadership profile, your way</h4>
-                                            <p className="text-gray-600 leading-relaxed text-lg font-light">Share your expertise, past outcomes, and availability, guided step-by-step with personal assistant support</p>
+                                            <h4 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#0eb59a] transition-colors">Build your leadership profile, your way</h4>
+                                            <p className="text-gray-600 leading-relaxed text-base font-light">Share your expertise, past outcomes, and availability, guided step-by-step with personal assistant support</p>
                                         </div>
                                     </motion.div>
                                     
                                     {/* Item 2 */}
                                     <motion.div 
                                         whileHover={{ x: 10 }}
-                                        className="flex flex-col sm:flex-row items-center sm:items-start gap-6 group text-center sm:text-left"
+                                        className="flex flex-col sm:flex-row items-center sm:items-start gap-5 group text-center sm:text-left"
                                     >
-                                        <div className="shrink-0 w-16 h-16 rounded-2xl bg-[#f0fdfa] border border-[#ccfbf1] flex items-center justify-center text-[#0eb59a] shadow-sm group-hover:scale-110 group-hover:shadow-md group-hover:bg-[#0eb59a] group-hover:text-white transition-all duration-300">
-                                            <Search size={28} />
+                                        <div className="shrink-0 w-14 h-14 rounded-2xl bg-[#f0fdfa] border border-[#ccfbf1] flex items-center justify-center text-[#0eb59a] shadow-sm group-hover:scale-110 group-hover:shadow-md group-hover:bg-[#0eb59a] group-hover:text-white transition-all duration-300">
+                                            <Search size={24} />
                                         </div>
                                         <div>
-                                            <h4 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-[#0eb59a] transition-colors">Get discovered by the right companies</h4>
-                                            <p className="text-gray-600 leading-relaxed text-lg font-light">Our AI matching engine scores your leadership style and culture fit against founder needs before any introduction is made</p>
+                                            <h4 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#0eb59a] transition-colors">Get discovered by the right companies</h4>
+                                            <p className="text-gray-600 leading-relaxed text-base font-light">Our AI matching engine scores your leadership style and culture fit against founder needs before any introduction is made</p>
                                         </div>
                                     </motion.div>
 
                                     {/* Item 3 */}
                                     <motion.div 
                                         whileHover={{ x: 10 }}
-                                        className="flex flex-col sm:flex-row items-center sm:items-start gap-6 group text-center sm:text-left"
+                                        className="flex flex-col sm:flex-row items-center sm:items-start gap-5 group text-center sm:text-left"
                                     >
-                                        <div className="shrink-0 w-16 h-16 rounded-2xl bg-[#f0fdfa] border border-[#ccfbf1] flex items-center justify-center text-[#0eb59a] shadow-sm group-hover:scale-110 group-hover:shadow-md group-hover:bg-[#0eb59a] group-hover:text-white transition-all duration-300">
-                                            <Lock size={28} />
+                                        <div className="shrink-0 w-14 h-14 rounded-2xl bg-[#f0fdfa] border border-[#ccfbf1] flex items-center justify-center text-[#0eb59a] shadow-sm group-hover:scale-110 group-hover:shadow-md group-hover:bg-[#0eb59a] group-hover:text-white transition-all duration-300">
+                                            <Lock size={24} />
                                         </div>
                                         <div>
-                                            <h4 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-[#0eb59a] transition-colors">Unlock high-value engagements</h4>
-                                            <p className="text-gray-600 leading-relaxed text-lg font-light">Access pre-qualified fractional, interim, and advisory roles with contracts and payments built in</p>
+                                            <h4 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#0eb59a] transition-colors">Unlock high-value engagements</h4>
+                                            <p className="text-gray-600 leading-relaxed text-base font-light">Access pre-qualified fractional, interim, and advisory roles with contracts and payments built in</p>
                                         </div>
                                     </motion.div>
                                 </div>
                             </div>
 
                             {/* For Companies Column */}
-                            <div className="lg:pl-24 flex flex-col gap-12 mt-12 lg:mt-0">
+                            <div className="lg:pl-16 flex flex-col gap-10 mt-12 lg:mt-0">
                                 <div className="text-center lg:text-left">
-                                    <h3 className="text-4xl font-bold text-[#134e40] mb-4 tracking-tight">For Companies</h3>
-                                    <p className="text-gray-500 text-xl font-light">Find your next strategic leader</p>
+                                    <h3 className="text-3xl font-bold text-[#134e40] mb-3 tracking-tight">For Companies</h3>
+                                    <p className="text-gray-500 text-lg font-light">Find your next strategic leader</p>
                                 </div>
 
                                 <div className="space-y-12">
                                     {/* Item 1 */}
                                     <motion.div 
                                         whileHover={{ x: 10 }}
-                                        className="flex flex-col sm:flex-row items-center sm:items-start gap-6 group text-center sm:text-left"
+                                        className="flex flex-col sm:flex-row items-center sm:items-start gap-5 group text-center sm:text-left"
                                     >
-                                        <div className="shrink-0 w-16 h-16 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#134e40] shadow-sm group-hover:scale-110 group-hover:shadow-md group-hover:bg-[#134e40] group-hover:text-white transition-all duration-300">
-                                            <Monitor size={28} />
+                                        <div className="shrink-0 w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#134e40] shadow-sm group-hover:scale-110 group-hover:shadow-md group-hover:bg-[#134e40] group-hover:text-white transition-all duration-300">
+                                            <Monitor size={24} />
                                         </div>
                                         <div>
-                                            <h4 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-[#134e40] transition-colors">Define your leadership need in minutes</h4>
-                                            <p className="text-gray-600 leading-relaxed text-lg font-light">Use our guided requirement wizard to articulate your real business challenge — not just a job title</p>
+                                            <h4 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#134e40] transition-colors">Define your leadership need in minutes</h4>
+                                            <p className="text-gray-600 leading-relaxed text-base font-light">Use our guided requirement wizard to articulate your real business challenge — not just a job title</p>
                                         </div>
                                     </motion.div>
                                     
                                     {/* Item 2 */}
                                     <motion.div 
                                         whileHover={{ x: 10 }}
-                                        className="flex flex-col sm:flex-row items-center sm:items-start gap-6 group text-center sm:text-left"
+                                        className="flex flex-col sm:flex-row items-center sm:items-start gap-5 group text-center sm:text-left"
                                     >
-                                        <div className="shrink-0 w-16 h-16 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#134e40] shadow-sm group-hover:scale-110 group-hover:shadow-md group-hover:bg-[#134e40] group-hover:text-white transition-all duration-300">
-                                            <Users size={28} />
+                                        <div className="shrink-0 w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#134e40] shadow-sm group-hover:scale-110 group-hover:shadow-md group-hover:bg-[#134e40] group-hover:text-white transition-all duration-300">
+                                            <Users size={24} />
                                         </div>
                                         <div>
-                                            <h4 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-[#134e40] transition-colors">Get matched with verified senior leaders</h4>
-                                            <p className="text-gray-600 leading-relaxed text-lg font-light">AI-powered shortlisting of CXOs who fit your industry, stage, and culture, not just keywords</p>
+                                            <h4 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#134e40] transition-colors">Get matched with verified senior leaders</h4>
+                                            <p className="text-gray-600 leading-relaxed text-base font-light">AI-powered shortlisting of CXOs who fit your industry, stage, and culture, not just keywords</p>
                                         </div>
                                     </motion.div>
 
                                     {/* Item 3 */}
                                     <motion.div 
                                         whileHover={{ x: 10 }}
-                                        className="flex flex-col sm:flex-row items-center sm:items-start gap-6 group text-center sm:text-left"
+                                        className="flex flex-col sm:flex-row items-center sm:items-start gap-5 group text-center sm:text-left"
                                     >
-                                        <div className="shrink-0 w-16 h-16 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#134e40] shadow-sm group-hover:scale-110 group-hover:shadow-md group-hover:bg-[#134e40] group-hover:text-white transition-all duration-300">
-                                            <CheckCircle2 size={28} />
+                                        <div className="shrink-0 w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-[#134e40] shadow-sm group-hover:scale-110 group-hover:shadow-md group-hover:bg-[#134e40] group-hover:text-white transition-all duration-300">
+                                            <CheckCircle2 size={24} />
                                         </div>
                                         <div>
-                                            <h4 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-[#134e40] transition-colors">Onboard with confidence and governance</h4>
-                                            <p className="text-gray-600 leading-relaxed text-lg font-light">Kick off engagements with structured milestones, escrow-backed payments, and PMO oversight from day one</p>
+                                            <h4 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#134e40] transition-colors">Onboard with confidence and governance</h4>
+                                            <p className="text-gray-600 leading-relaxed text-base font-light">Kick off engagements with structured milestones, escrow-backed payments, and PMO oversight from day one</p>
                                         </div>
                                     </motion.div>
                                 </div>
@@ -329,10 +338,7 @@ const Home = () => {
                 </div>
 
                 <div className="max-w-[100vw] mx-auto relative z-10 flex flex-col items-center overflow-hidden">
-                    <div className="inline-flex items-center gap-2 text-[#0eb59a] font-semibold tracking-wide uppercase text-sm mb-4 bg-[#134e40]/40 px-4 py-1.5 rounded-full backdrop-blur-md">
-                        <div className="w-2 h-2 rounded-full bg-[#0eb59a]"></div>
-                        Services
-                    </div>
+
                     <h2 className="text-center text-5xl md:text-6xl text-white mb-20 font-serif font-bold tracking-tight">What problem can we <span className="text-[#0eb59a]">solve together?</span></h2>
 
                     <div className="relative w-full flex items-center justify-center px-4 md:px-0">
@@ -424,10 +430,7 @@ const Home = () => {
             {/* Membership Section */}
             <AnimatedSection className="py-24 px-6 max-w-7xl mx-auto bg-white rounded-[3rem] mt-24 border border-gray-100 shadow-xl" id="membership">
                 <div className="text-center mb-16">
-                    <div className="inline-flex items-center gap-2 text-[#0eb59a] font-semibold tracking-wide uppercase text-sm mb-4">
-                        <div className="w-2 h-2 rounded-full bg-[#0eb59a]"></div>
-                        Exclusive Network
-                    </div>
+
                     <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6 tracking-tight">Membership benefits</h2>
                     <p className="text-gray-600 text-lg max-w-2xl mx-auto">Join a curated community of top-tier executives and forward-thinking companies. Gain access to premium opportunities and resources.</p>
                 </div>
@@ -465,10 +468,7 @@ const Home = () => {
             <AnimatedSection className="py-32 px-6 max-w-7xl mx-auto">
                 <div className="mb-16 text-center md:text-left flex flex-col md:flex-row justify-between items-end gap-6">
                     <div>
-                        <div className="inline-flex items-center gap-2 text-[#0eb59a] font-semibold tracking-wide uppercase text-sm mb-4">
-                            <div className="w-2 h-2 rounded-full bg-[#0eb59a]"></div>
-                            Join Us
-                        </div>
+
                         <h2 className="text-4xl md:text-6xl text-gray-900 font-serif font-bold tracking-tight">Be a part of our story.</h2>
                     </div>
                     <p className="text-gray-600 text-xl max-w-md md:text-right font-light">Step into our ecosystem to find how you fit in the next generation of fractional leadership.</p>
@@ -524,10 +524,7 @@ const Home = () => {
                             transition={{ duration: 0.8 }}
                             className="text-left"
                         >
-                            <div className="inline-flex items-center gap-2 text-teal-400 font-semibold tracking-wide uppercase text-sm mb-4">
-                                <div className="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></div>
-                                Get In Touch
-                            </div>
+
                             <h2 className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 tracking-tight">Let's build <br/>the <span className="text-[#0eb59a]">future.</span></h2>
                             <p className="text-gray-300 text-lg md:text-xl font-light mb-12 max-w-lg leading-relaxed">
                                 Join our exclusive network of forward-thinking companies and elite fractional leaders. We're ready to answer your questions.

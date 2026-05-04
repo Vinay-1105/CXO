@@ -25,7 +25,13 @@ const ExpertDashboard = () => {
         <div className="min-h-screen bg-gray-50 flex flex-col">
             {/* Top Navigation */}
             <nav className="flex items-center justify-between px-8 py-4 bg-gray-900 text-white shadow sticky top-0 z-50">
-                <div className="text-2xl font-serif italic font-bold">CXO<span className="text-teal-400">.</span></div>
+                <div className="flex items-center">
+                    <img 
+                        src="/LOGO_FINAL.png" 
+                        alt="CXO Connect" 
+                        className="h-8 w-auto object-contain transition-opacity duration-200 hover:opacity-80 [filter:brightness(0)_saturate(100%)_invert(55%)_sepia(60%)_saturate(400%)_hue-rotate(120deg)]"
+                    />
+                </div>
                 <div className="flex items-center gap-4">
                     <input type="text" placeholder="Search opportunities..." className="px-4 py-2 rounded bg-gray-800 text-white placeholder-gray-400 focus:outline-none" />
                     <button className="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded font-semibold">I am a Company</button>
