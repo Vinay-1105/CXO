@@ -4,6 +4,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { CheckCircle2, ChevronRight, ChevronLeft, AlertCircle } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import OTPModal from "../components/OTPModal";
+import SuccessModal from "../components/SuccessModal";
 
 const JOIN_STEPS = ["Basic Details", "Company Info", "Online Presence", "Account Setup"];
 
@@ -17,6 +18,7 @@ const JoinCompany = () => {
 	const [showAdminOtpModal, setShowAdminOtpModal] = useState(false);
 	const [adminOtpVerified, setAdminOtpVerified] = useState(false);
 	const [showErrorBanner, setShowErrorBanner] = useState(false);
+	const [showSuccessModal, setShowSuccessModal] = useState(false);
 
 	const {
 		register,
@@ -49,7 +51,7 @@ const JoinCompany = () => {
 	const checkUniqueField = async (field, value) => {
 		// Map camelCase form fields to snake_case DB columns
 		const dbColumn = field === 'companyName' ? 'company_name' : 
-						 field === 'companyHandle' ? 'company_handle' : field;
+						 field === 'adminEmail' ? 'admin_email' : field;
 						 
 		try {
 			const { data, error } = await supabase
@@ -173,7 +175,7 @@ const JoinCompany = () => {
 
 	const onSubmit = async (data) => {
 		// Final step validation
-		const isFinalValid = await trigger(["adminName", "adminEmail", "companyHandle", "gstin", "terms"]);
+		const isFinalValid = await trigger(["adminName", "adminEmail", "cinNumber", "gstin", "terms"]);
 
 		if (!adminOtpVerified) {
 			alert("Please verify your Admin Email address before submitting the application.");
@@ -235,7 +237,7 @@ const JoinCompany = () => {
 							admin_name: data.adminName,
 							admin_email: data.adminEmail,
 							gstin: data.gstin,
-							company_handle: data.companyHandle,
+							cin_number: data.cinNumber,
 							contact_number: data.contactNumber,
 							company_age: data.companyAge,
 							instagram: data.instagram,
@@ -251,8 +253,7 @@ const JoinCompany = () => {
 
 			if (dbError) throw dbError;
 
-			alert("Company application submitted successfully! ✅");
-			navigate('/company-dashboard');
+			setShowSuccessModal(true);
 		} catch (error) {
 			console.error(error);
 			alert("Error submitting application: " + error.message);
@@ -520,39 +521,63 @@ const JoinCompany = () => {
 							</div>
 
 							<div className="group flex flex-col gap-1.5 mb-4">
-								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">LinkedIn Page (Optional)</label>
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">LinkedIn Page URL (Optional)</label>
 								<input
 									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									placeholder="https://linkedin.com/company/yourcompany"
-									{...register("linkedin")}
+									{...register("linkedin", {
+										pattern: {
+											value: /^https:\/\/(www\.)?linkedin\.com\/.+/,
+											message: "Must be a valid LinkedIn URL starting with https://"
+										}
+									})}
 								/>
+								{errors.linkedin && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.linkedin.message}</span>}
 							</div>
 
 							<div className="group flex flex-col gap-1.5 mb-4">
-								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Instagram Handle (Optional)</label>
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Instagram Profile URL (Optional)</label>
 								<input
 									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
-									placeholder="@yourcompany"
-									{...register("instagram")}
+									placeholder="https://instagram.com/yourcompany"
+									{...register("instagram", {
+										pattern: {
+											value: /^https:\/\/(www\.)?instagram\.com\/.+/,
+											message: "Must be a valid Instagram URL starting with https://"
+										}
+									})}
 								/>
+								{errors.instagram && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.instagram.message}</span>}
 							</div>
 
 							<div className="group flex flex-col gap-1.5 mb-4">
-								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">X (Twitter) Handle (Optional)</label>
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">X (Twitter) Profile URL (Optional)</label>
 								<input
 									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
-									placeholder="@yourcompany"
-									{...register("twitter")}
+									placeholder="https://x.com/yourcompany"
+									{...register("twitter", {
+										pattern: {
+											value: /^https:\/\/(www\.)?(twitter\.com|x\.com)\/.+/,
+											message: "Must be a valid Twitter/X URL starting with https://"
+										}
+									})}
 								/>
+								{errors.twitter && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.twitter.message}</span>}
 							</div>
 
 							<div className="group flex flex-col gap-1.5 mb-4">
-								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">GitHub Organization (Optional)</label>
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">GitHub Organization URL (Optional)</label>
 								<input
 									className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800"
 									placeholder="https://github.com/yourcompany"
-									{...register("github")}
+									{...register("github", {
+										pattern: {
+											value: /^https:\/\/(www\.)?github\.com\/.+/,
+											message: "Must be a valid GitHub URL starting with https://"
+										}
+									})}
 								/>
+								{errors.github && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.github.message}</span>}
 							</div>
 						</div>
 					)}
@@ -587,7 +612,8 @@ const JoinCompany = () => {
 												pattern: {
 													value: /\S+@\S+\.\S+/,
 													message: "Invalid email address"
-												}
+												},
+												validate: async (value) => (await checkUniqueField("adminEmail", value)) || "Admin Email is already registered"
 											})}
 										/>
 										{errors.adminEmail && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.adminEmail.message}</span>}
@@ -604,23 +630,24 @@ const JoinCompany = () => {
 							</div>
 
 							<div className="group flex flex-col gap-1.5 mb-4">
-								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">Choose Company Handle *</label>
+								<label className="text-sm font-semibold text-gray-700 group-focus-within:text-teal-600 transition-colors duration-150">CIN Number *</label>
 								<div className="relative">
-									<span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400 font-semibold">@</span>
 									<input
-										className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:bg-white transition-all text-gray-800"
-										placeholder="companyname"
-										{...register("companyHandle", {
-											required: "Company Handle is required",
+										className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:bg-white focus:scale-[1.01] transition-all duration-200 ease-in-out text-gray-800 uppercase"
+										placeholder="U12345MH2024PTC123456"
+										{...register("cinNumber", {
+											required: "CIN Number is required",
 											pattern: {
-												value: /^[a-z0-9_]{3,20}$/,
-												message: "3-20 lowercase letters, numbers, or underscores"
+												value: /^[LU]\d{5}[A-Z]{2}\d{4}[A-Z]{3}\d{6}$/i,
+												message: "Please enter a valid CIN format (e.g., U12345MH2024PTC123456)"
 											},
-											validate: async (value) => (await checkUniqueField("companyHandle", value)) || "Handle is already taken"
+											onChange: (e) => {
+												setValue("cinNumber", e.target.value.toUpperCase(), { shouldValidate: true });
+											}
 										})}
 									/>
 								</div>
-								{errors.companyHandle && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.companyHandle.message}</span>}
+								{errors.cinNumber && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.cinNumber.message}</span>}
 							</div>
 
 							<div className="group flex flex-col gap-1.5 mb-4">
@@ -632,8 +659,7 @@ const JoinCompany = () => {
 										required: "GSTIN is required",
 										onChange: (e) => {
 											setValue("gstin", e.target.value.toUpperCase(), { shouldValidate: true });
-										},
-										validate: async (value) => (await checkUniqueField("gstin", value)) || "GSTIN is already registered"
+										}
 									})}
 								/>
 								{errors.gstin && <span className="text-red-500 text-xs font-medium mt-1 animate-pulse">{errors.gstin.message}</span>}
@@ -698,6 +724,7 @@ const JoinCompany = () => {
 				onClose={() => setShowAdminOtpModal(false)}
 				onVerify={handleVerifyAdminOTP}
 			/>
+			<SuccessModal isOpen={showSuccessModal} role="company" />
 		</div>
 	);
 };
